@@ -74,7 +74,6 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
     onUpdate({ ...block, children: [...block.children, newChild] });
   }, [block, onUpdate]);
 
-  const HeadingTag = `h${block.level}` as keyof JSX.IntrinsicElements;
   const canAddChildren = block.level < MAX_DEPTH;
   const indent = (block.level - 3) * 24;
 
