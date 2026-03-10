@@ -1,5 +1,17 @@
 import React, { useState, useCallback } from "react";
 import { Block } from "@/types/document";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface DocumentBlockProps {
   block: Block;
@@ -8,6 +20,18 @@ interface DocumentBlockProps {
 }
 
 const MAX_DEPTH = 6;
+
+const renderBlockPreview = (block: Block): React.ReactNode => (
+  <div key={block.id} className="mb-2">
+    <div className={`font-sans font-semibold h${block.level}`}>{block.title}</div>
+    {block.content && <p className="text-sm text-muted-foreground">{block.content}</p>}
+    {block.children.length > 0 && (
+      <div className="ml-4 mt-1">
+        {block.children.map((child) => renderBlockPreview(child))}
+      </div>
+    )}
+  </div>
+);
 
 const DocumentBlock: React.FC<DocumentBlockProps> = ({
   block,
@@ -74,8 +98,6 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
 
   const canAddChildren = block.level < MAX_DEPTH;
 
-  const HeadingTag = `h${block.level}` as keyof JSX.IntrinsicElements;
-
   return (
     <div
       id={`block-${block.id}`}
@@ -116,23 +138,46 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
           {block.title}
         </div>
 
-        {/* Delete button */}
+        {/* Delete button with confirmation modal */}
         {isHovered && (
-          <button
-            onClick={() => onDelete(block.id)}
-            className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
-            aria-label="Remover bloco"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button
+                className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                aria-label="Remover bloco"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Excluir bloco</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Este bloco e todo o seu conteúdo serão excluídos permanentemente.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <ScrollArea className="max-h-60 rounded-md border border-border bg-muted/30 p-4">
+                {renderBlockPreview(block)}
+              </ScrollArea>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => onDelete(block.id)}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Excluir
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
       </div>
 
       {/* Content & Children (collapsible) */}
       {!block.collapsed && (
-        <div>
+        <div className="pl-8">
           {/* Content */}
           <p
             contentEditable
@@ -162,7 +207,7 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
               </svg>
-              <span className="font-sans">Adicionar H{block.level + 1}</span>
+              <span className="font-sans">Bloco {block.level + 1}</span>
             </button>
           )}
         </div>
