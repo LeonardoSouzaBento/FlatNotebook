@@ -108,15 +108,16 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
         </button>
 
         {/* Title */}
-        <HeadingTag
+        <div
           contentEditable
           suppressContentEditableWarning
           onBlur={handleTitleChange}
-          className="flex-1 cursor-text px-1 rounded"
-          style={{ margin: 0 }}
+          className={`flex-1 cursor-text px-1 rounded h${block.level}`}
+          role="heading"
+          aria-level={block.level}
         >
           {block.title}
-        </HeadingTag>
+        </div>
 
         {/* Delete button */}
         {isHovered && (
