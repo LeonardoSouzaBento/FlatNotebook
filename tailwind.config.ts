@@ -57,6 +57,12 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        surface: "hsl(var(--surface))",
+        "surface-hover": "hsl(var(--surface-hover))",
+        "block-border": "hsl(var(--block-border))",
+        "toc-bg": "hsl(var(--toc-bg))",
+        fab: "hsl(var(--fab-bg))",
+        "fab-hover": "hsl(var(--fab-hover))",
       },
       borderRadius: {
         lg: "var(--radius)",
