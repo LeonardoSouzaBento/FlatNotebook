@@ -1,10 +1,10 @@
 /* Typography System - FlatNotebook */
 
-@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,500&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
   /* Font families */
-  --font-heading: 'Source Serif 4', Georgia, serif;
+  --font-heading: 'Inter', -apple-system, sans-serif;
   --font-body: 'Inter', -apple-system, sans-serif;
 
   /* Font sizes */
@@ -91,59 +91,12 @@ h6, .h6 {
   letter-spacing: 0em;
 }
 
-/* Body text sizes */
-.text-xs {
-  font-size: var(--text-xs);
-  line-height: 1.5;
-  letter-spacing: 0.01em;
-}
-
-.text-sm {
-  font-size: var(--text-sm);
-  line-height: 1.55;
-  letter-spacing: 0em;
-}
-
-.text-base {
-  font-size: var(--text-base);
-  line-height: 1.65;
-  letter-spacing: -0.01em;
-}
-
-.text-lg {
-  font-size: var(--text-lg);
-  line-height: 1.55;
-  letter-spacing: -0.01em;
-}
-
 /* Paragraphs */
 p {
   font-size: var(--text-base);
   line-height: 1.65;
   letter-spacing: -0.01em;
   margin: 0;
-}
-
-/* Button text */
-.btn-text {
-  font-size: var(--text-button);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: 0.01em;
-}
-
-.btn-text-sm {
-  font-size: var(--text-sm-button);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: 0.01em;
-}
-
-.btn-text-lg {
-  font-size: var(--text-lg-button);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: 0em;
 }
 
 /* Editable elements */
