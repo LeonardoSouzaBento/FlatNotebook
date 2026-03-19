@@ -253,10 +253,11 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
         <div className="pl-8">
           {/* Content */}
           <p
-            contentEditable
+            contentEditable={!readOnly}
             suppressContentEditableWarning
             onBlur={handleContentChange}
-            className="cursor-text rounded text-foreground/85 min-h-[1.5em] font-sans empty:before:content-['Escreva_aqui...'] empty:before:text-muted-foreground/50"
+            onClick={readOnly ? toggleCollapse : undefined}
+            className={`rounded text-foreground/85 min-h-[1.5em] font-sans empty:before:content-['Escreva_aqui...'] empty:before:text-muted-foreground/50 ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
           >
             {block.content}
           </p>
