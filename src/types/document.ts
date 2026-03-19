@@ -1,3 +1,15 @@
+export interface ImageEdit {
+  crop?: { x: number; y: number; width: number; height: number };
+  resize?: { width: number; height: number };
+}
+
+export interface BlockImage {
+  id: string;
+  src: string;
+  alt?: string;
+  edits: ImageEdit;
+}
+
 export interface Block {
   id: string;
   level: number;
@@ -5,6 +17,7 @@ export interface Block {
   content: string;
   collapsed: boolean;
   children: Block[];
+  images?: BlockImage[];
 }
 
 export interface Document {
