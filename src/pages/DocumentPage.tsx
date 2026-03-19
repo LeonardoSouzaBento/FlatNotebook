@@ -7,6 +7,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 
 const DocumentPage: React.FC = () => {
   const [doc, setDoc] = useState<Document>(sampleDocument);
+  const [readOnly, setReadOnly] = useState(false);
 
   const handleTitleChange = useCallback(
     (e: React.FocusEvent<HTMLHeadingElement>) => {
