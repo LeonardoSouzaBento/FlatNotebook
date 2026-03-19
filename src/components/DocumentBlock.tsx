@@ -190,8 +190,8 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
           {block.title}
         </div>
 
-        {/* Action buttons on hover */}
-        {isHovered && (
+        {/* Action buttons on hover (hidden in read-only) */}
+        {isHovered && !readOnly && (
           <div className="flex items-center gap-1">
             {/* Add image button */}
             <button
