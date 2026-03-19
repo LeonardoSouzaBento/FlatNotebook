@@ -3,6 +3,7 @@ import { Document, Block } from "@/types/document";
 import { sampleDocument } from "@/data/sampleDocument";
 import DocumentBlock from "@/components/DocumentBlock";
 import TableOfContents from "@/components/TableOfContents";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const DocumentPage: React.FC = () => {
   const [doc, setDoc] = useState<Document>(sampleDocument);
