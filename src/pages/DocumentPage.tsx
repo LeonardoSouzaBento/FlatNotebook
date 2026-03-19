@@ -3,6 +3,7 @@ import { Document, Block } from "@/types/document";
 import { sampleDocument } from "@/data/sampleDocument";
 import DocumentBlock from "@/components/DocumentBlock";
 import TableOfContents from "@/components/TableOfContents";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const DocumentPage: React.FC = () => {
   const [doc, setDoc] = useState<Document>(sampleDocument);
@@ -75,6 +76,11 @@ const DocumentPage: React.FC = () => {
 
       {/* Document content */}
       <main className="max-w-3xl mx-auto px-6 py-12">
+        {/* Theme toggle */}
+        <div className="flex justify-end mb-4">
+          <ThemeToggle />
+        </div>
+
         {/* Title H1 */}
         <h1
           contentEditable
