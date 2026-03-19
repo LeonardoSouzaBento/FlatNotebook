@@ -279,6 +279,7 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
               block={child}
               onUpdate={handleChildUpdate}
               onDelete={handleChildDelete}
+              readOnly={readOnly}
             />
           ))}
 
