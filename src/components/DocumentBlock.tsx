@@ -40,6 +40,7 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
   block,
   onUpdate,
   onDelete,
+  readOnly = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
