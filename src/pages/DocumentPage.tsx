@@ -124,6 +124,7 @@ const DocumentPage: React.FC = () => {
               block={block}
               onUpdate={handleBlockUpdate}
               onDelete={handleBlockDelete}
+              readOnly={readOnly}
             />
           ))}
         </div>
