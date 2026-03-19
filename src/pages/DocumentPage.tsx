@@ -76,6 +76,11 @@ const DocumentPage: React.FC = () => {
 
       {/* Document content */}
       <main className="max-w-3xl mx-auto px-6 py-12">
+        {/* Theme toggle */}
+        <div className="flex justify-end mb-4">
+          <ThemeToggle />
+        </div>
+
         {/* Title H1 */}
         <h1
           contentEditable
