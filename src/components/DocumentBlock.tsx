@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from "react";
-import { Block } from "@/types/document";
+import React, { useState, useCallback, useRef } from "react";
+import { Block, BlockImage as BlockImageType } from "@/types/document";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,6 +12,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ImagePlus } from "lucide-react";
+import BlockImageItem from "@/components/BlockImageItem";
 
 interface DocumentBlockProps {
   block: Block;
@@ -39,6 +41,7 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
   onDelete,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toggleCollapse = useCallback(() => {
     onUpdate({ ...block, collapsed: !block.collapsed });
@@ -96,6 +99,52 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
     onUpdate({ ...block, children: [...block.children, newChild] });
   }, [block, onUpdate]);
 
+  const handleImageAdd = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const src = ev.target?.result as string;
+        const newImage: BlockImageType = {
+          id: `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+          src,
+          alt: file.name,
+          edits: {},
+        };
+        onUpdate({
+          ...block,
+          images: [...(block.images || []), newImage],
+        });
+      };
+      reader.readAsDataURL(file);
+      e.target.value = "";
+    },
+    [block, onUpdate]
+  );
+
+  const handleImageUpdate = useCallback(
+    (updatedImage: BlockImageType) => {
+      const newImages = (block.images || []).map((img) =>
+        img.id === updatedImage.id ? updatedImage : img
+      );
+      onUpdate({ ...block, images: newImages });
+    },
+    [block, onUpdate]
+  );
+
+  const handleImageDelete = useCallback(
+    (imageId: string) => {
+      const newImages = (block.images || []).filter((img) => img.id !== imageId);
+      onUpdate({ ...block, images: newImages });
+    },
+    [block, onUpdate]
+  );
+
   const canAddChildren = block.level < MAX_DEPTH;
 
   return (
@@ -138,42 +187,63 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
           {block.title}
         </div>
 
-        {/* Delete button with confirmation modal */}
+        {/* Action buttons on hover */}
         {isHovered && (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <button
-                className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
-                aria-label="Remover bloco"
-              >
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Excluir bloco</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Este bloco e todo o seu conteúdo serão excluídos permanentemente.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <ScrollArea className="max-h-60 rounded-md border border-border bg-muted/30 p-4">
-                {renderBlockPreview(block)}
-              </ScrollArea>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => onDelete(block.id)}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          <div className="flex items-center gap-1">
+            {/* Add image button */}
+            <button
+              onClick={handleImageAdd}
+              className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded hover:bg-muted text-muted-foreground transition-colors"
+              aria-label="Adicionar imagem"
+            >
+              <ImagePlus className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Delete button with confirmation modal */}
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button
+                  className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                  aria-label="Remover bloco"
                 >
-                  Excluir
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Excluir bloco</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Este bloco e todo o seu conteúdo serão excluídos permanentemente.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <ScrollArea className="max-h-60 rounded-md border border-border bg-muted/30 p-4">
+                  {renderBlockPreview(block)}
+                </ScrollArea>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => onDelete(block.id)}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Excluir
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         )}
       </div>
+
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
 
       {/* Content & Children (collapsible) */}
       {!block.collapsed && (
@@ -187,6 +257,16 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
           >
             {block.content}
           </p>
+
+          {/* Images */}
+          {(block.images || []).map((image) => (
+            <BlockImageItem
+              key={image.id}
+              image={image}
+              onUpdate={handleImageUpdate}
+              onDelete={handleImageDelete}
+            />
+          ))}
 
           {/* Children */}
           {block.children.map((child) => (
