@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/ui/button";
+import { Input } from "@/ui/input";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,10 +22,16 @@ const LoginPage: React.FC = () => {
       <div className="w-full max-w-sm space-y-8">
         {/* Brand */}
         <div className="text-center">
-          <h1 className="h1-hero mb-1" style={{ fontFamily: 'var(--font-heading)' }}>
+          <h1
+            className="h1-hero mb-1"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
             FlatNotebook
           </h1>
-          <p className="text-muted-foreground" style={{ fontSize: 'var(--text-base)' }}>
+          <p
+            className="text-muted-foreground"
+            style={{ fontSize: "var(--text-base)" }}
+          >
             Documentos estruturados, pensamento claro.
           </p>
         </div>
@@ -63,7 +69,10 @@ const LoginPage: React.FC = () => {
             <div className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center">
-            <span className="bg-background px-3 text-muted-foreground" style={{ fontSize: 'var(--text-sm)' }}>
+            <span
+              className="bg-background px-3 text-muted-foreground"
+              style={{ fontSize: "var(--text-sm)" }}
+            >
               ou
             </span>
           </div>
@@ -72,7 +81,10 @@ const LoginPage: React.FC = () => {
         {/* Email login */}
         <form onSubmit={handleEmailLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5" style={{ fontSize: 'var(--text-sm)' }}>
+            <label
+              className="block text-sm font-medium text-foreground mb-1.5"
+              style={{ fontSize: "var(--text-sm)" }}
+            >
               Email
             </label>
             <Input
@@ -84,7 +96,10 @@ const LoginPage: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5" style={{ fontSize: 'var(--text-sm)' }}>
+            <label
+              className="block text-sm font-medium text-foreground mb-1.5"
+              style={{ fontSize: "var(--text-sm)" }}
+            >
               Senha
             </label>
             <Input
@@ -100,7 +115,10 @@ const LoginPage: React.FC = () => {
           </Button>
         </form>
 
-        <p className="text-center text-muted-foreground" style={{ fontSize: 'var(--text-xs)' }}>
+        <p
+          className="text-center text-muted-foreground"
+          style={{ fontSize: "var(--text-xs)" }}
+        >
           Não tem conta?{" "}
           <button className="text-accent hover:underline">Criar conta</button>
         </p>

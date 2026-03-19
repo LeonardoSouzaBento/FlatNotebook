@@ -1,0 +1,120 @@
+@import "tailwindcss";
+@layer theme, base, typography, components, utilities;
+
+@theme {
+  /* Font families */
+  --font-heading: "Inter", -apple-system, sans-serif;
+  --font-body: "Inter", -apple-system, sans-serif;
+
+  /* Font sizes */
+  --text-xs: 0.790123em;
+  --text-sm: 0.888889em;
+  --text-base: 1em;
+  --text-lg: 1.125em;
+  --text-h6: 1.125em;
+  --text-h5: 1.265625em;
+  --text-h4: 1.423828em;
+  --text-h3: 1.601807em;
+  --text-h2: 1.802032em;
+  --text-h1: 2.027287em;
+  --text-h1-hero: 2.280697em;
+  --text-button: 0.942809em;
+  --text-sm-button: 0.888889em;
+  --text-lg-button: 1em;
+  
+  --radius: 0.5rem;
+
+  --color-background: hsl(40 33% 97%);
+  --color-foreground: hsl(30 10% 15%);
+  --color-card: hsl(40 25% 95%);
+  --color-card-foreground: hsl(30 10% 15%);
+  --color-popover: hsl(40 33% 97%);
+  --color-popover-foreground: hsl(30 10% 15%);
+  --color-primary: hsl(30 60% 42%);
+  --color-primary-foreground: hsl(40 33% 97%);
+  --color-secondary: hsl(35 20% 90%);
+  --color-secondary-foreground: hsl(30 10% 25%);
+  --color-muted: hsl(35 15% 92%);
+  --color-muted-foreground: hsl(30 8% 50%);
+  --color-accent: hsl(30 45% 50%);
+  --color-accent-foreground: hsl(40 33% 97%);
+  --color-destructive: hsl(0 65% 55%);
+  --color-destructive-foreground: hsl(40 33% 97%);
+  --color-border: hsl(35 15% 85%);
+  --color-input: hsl(35 15% 85%);
+  --color-ring: hsl(30 60% 42%);
+  --color-sidebar-background: hsl(40 25% 95%);
+  --color-sidebar-foreground: hsl(30 10% 25%);
+  --color-sidebar-primary: hsl(30 60% 42%);
+  --color-sidebar-primary-foreground: hsl(40 33% 97%);
+  --color-sidebar-accent: hsl(35 20% 90%);
+  --color-sidebar-accent-foreground: hsl(30 10% 25%);
+  --color-sidebar-border: hsl(35 15% 85%);
+  --color-sidebar-ring: hsl(30 60% 42%);
+  /* FlatNotebook custom tokens */
+  --color-surface: hsl(40 30% 99%);
+  --color-surface-hover: hsl(35 20% 95%);
+  --color-block-border: hsl(35 15% 88%);
+  --color-toc-bg: hsl(35 20% 94%);
+  --color-fab-bg: hsl(30 60% 42%);
+  --color-fab-hover: hsl(30 65% 36%);
+}
+
+.dark {
+  --color-background: hsl(30 10% 10%);
+  --color-foreground: hsl(35 15% 90%);
+  --color-card: hsl(30 10% 13%);
+  --color-card-foreground: hsl(35 15% 90%);
+  --color-popover: hsl(30 10% 13%);
+  --color-popover-foreground: hsl(35 15% 90%);
+  --color-primary: hsl(30 55% 55%);
+  --color-primary-foreground: hsl(30 10% 10%);
+  --color-secondary: hsl(30 8% 18%);
+  --color-secondary-foreground: hsl(35 15% 85%);
+  --color-muted: hsl(30 8% 18%);
+  --color-muted-foreground: hsl(30 10% 55%);
+  --color-accent: hsl(30 45% 50%);
+  --color-accent-foreground: hsl(35 15% 90%);
+  --color-destructive: hsl(0 55% 45%);
+  --color-destructive-foreground: hsl(35 15% 90%);
+  --color-border: hsl(30 8% 22%);
+  --color-input: hsl(30 8% 22%);
+  --color-ring: hsl(30 55% 55%);
+  --color-sidebar-background: hsl(30 10% 10%);
+  --color-sidebar-foreground: hsl(35 15% 85%);
+  --color-sidebar-primary: hsl(30 55% 55%);
+  --color-sidebar-primary-foreground: hsl(30 10% 10%);
+  --color-sidebar-accent: hsl(30 8% 18%);
+  --color-sidebar-accent-foreground: hsl(35 15% 85%);
+  --color-sidebar-border: hsl(30 8% 22%);
+  --color-sidebar-ring: hsl(30 55% 55%);
+  --color-surface: hsl(30 10% 12%);
+  --color-surface-hover: hsl(30 8% 16%);
+  --color-block-border: hsl(30 8% 20%);
+  --color-toc-bg: hsl(30 8% 14%);
+  --color-fab-bg: hsl(30 55% 55%);
+  --color-fab-hover: hsl(30 60% 48%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  img {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+
+  button,
+  a {
+    cursor: pointer;
+  }
+
+  body {
+    overscroll-behavior-x: none;
+    @apply bg-background text-foreground;
+  }
+}

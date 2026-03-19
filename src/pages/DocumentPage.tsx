@@ -1,11 +1,13 @@
-import React, { useState, useCallback } from "react";
-import { Document, Block } from "@/types/document";
+import {
+  AddBlockButton,
+  DocBlock,
+  Header,
+  Summary,
+  TopOptions,
+} from "@/components/doc-page";
 import { sampleDocument } from "@/data/sampleDocument";
-import DocumentBlock from "@/components/DocumentBlock";
-import TableOfContents from "@/components/TableOfContents";
-import ThemeToggle from "@/components/ThemeToggle";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { Block, Document } from "@/types/document";
+import React, { useCallback, useState } from "react";
 
 const DocumentPage: React.FC = () => {
   const [doc, setDoc] = useState<Document>(sampleDocument);
@@ -15,27 +17,37 @@ const DocumentPage: React.FC = () => {
     (e: React.FocusEvent<HTMLHeadingElement>) => {
       const newTitle = e.currentTarget.textContent || "";
       if (newTitle !== doc.title) {
-        setDoc((d) => ({ ...d, title: newTitle, updatedAt: new Date().toISOString() }));
+        setDoc((d) => ({
+          ...d,
+          title: newTitle,
+          updatedAt: new Date().toISOString(),
+        }));
       }
     },
-    [doc.title]
+    [doc.title],
   );
 
   const handleSubtitleChange = useCallback(
     (e: React.FocusEvent<HTMLHeadingElement>) => {
       const newSub = e.currentTarget.textContent || "";
       if (newSub !== doc.subtitle) {
-        setDoc((d) => ({ ...d, subtitle: newSub, updatedAt: new Date().toISOString() }));
+        setDoc((d) => ({
+          ...d,
+          subtitle: newSub,
+          updatedAt: new Date().toISOString(),
+        }));
       }
     },
-    [doc.subtitle]
+    [doc.subtitle],
   );
 
   const handleBlockUpdate = useCallback((updatedBlock: Block) => {
     setDoc((d) => ({
       ...d,
       updatedAt: new Date().toISOString(),
-      blocks: d.blocks.map((b) => (b.id === updatedBlock.id ? updatedBlock : b)),
+      blocks: d.blocks.map((b) =>
+        b.id === updatedBlock.id ? updatedBlock : b,
+      ),
     }));
   }, []);
 
@@ -65,34 +77,10 @@ const DocumentPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Top bar */}
-      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border">
-        <div className="max-w-3xl mx-auto px-6 py-3 flex items-center justify-between">
-          <span className="font-medium text-foreground" style={{ fontFamily: 'var(--font-heading)', fontSize: 'var(--text-sm)' }}>
-            FlatNotebook
-          </span>
-          <span className="text-muted-foreground" style={{ fontSize: 'var(--text-xs)' }}>
-            Salvo automaticamente
-          </span>
-        </div>
-      </header>
-
+      <Header />
       {/* Document content */}
-      <main className="max-w-3xl mx-auto px-6 py-12">
-        {/* Controls */}
-        <div className="flex justify-end items-center gap-2 mb-4">
-          <Button
-            variant="default"
-            size="sm"
-            className="flex items-center gap-2"
-            onClick={() => setReadOnly((r) => !r)}
-          >
-            Somente leitura
-            <Switch checked={readOnly} onCheckedChange={setReadOnly} className="pointer-events-none" />
-          </Button>
-          <ThemeToggle />
-        </div>
-
+      <main className="max-w-3xl mx-auto px-6 py-2">
+        <TopOptions readOnly={readOnly} setReadOnly={setReadOnly} />
         {/* Title H1 */}
         <h1
           contentEditable={!readOnly}
@@ -114,12 +102,12 @@ const DocumentPage: React.FC = () => {
         </h2>
 
         {/* Table of Contents */}
-        <TableOfContents blocks={doc.blocks} />
+        <Summary blocks={doc.blocks} />
 
         {/* Blocks */}
         <div className="space-y-1">
           {doc.blocks.map((block) => (
-            <DocumentBlock
+            <DocBlock
               key={block.id}
               block={block}
               onUpdate={handleBlockUpdate}
@@ -131,17 +119,7 @@ const DocumentPage: React.FC = () => {
       </main>
 
       {/* FAB - Add chapter */}
-      {!readOnly && (
-        <button
-          onClick={addChapter}
-          className="fixed bottom-8 right-8 w-14 h-14 bg-fab hover:bg-fab-hover text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
-          aria-label="Adicionar capítulo"
-        >
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-        </button>
-      )}
+      {!readOnly && <AddBlockButton addChapter={addChapter} />}
     </div>
   );
 };
