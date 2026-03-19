@@ -79,8 +79,17 @@ const DocumentPage: React.FC = () => {
 
       {/* Document content */}
       <main className="max-w-3xl mx-auto px-6 py-12">
-        {/* Theme toggle */}
-        <div className="flex justify-end mb-4">
+        {/* Controls */}
+        <div className="flex justify-end items-center gap-2 mb-4">
+          <Button
+            variant="default"
+            size="sm"
+            className="flex items-center gap-2"
+            onClick={() => setReadOnly((r) => !r)}
+          >
+            Somente leitura
+            <Switch checked={readOnly} onCheckedChange={setReadOnly} className="pointer-events-none" />
+          </Button>
           <ThemeToggle />
         </div>
 
