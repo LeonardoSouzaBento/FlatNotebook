@@ -1,5 +1,4 @@
-import { Button } from "@/ui/button";
-import { Switch } from "@/ui/switch";
+import { Button, Switch } from "@/ui";
 import { ThemeToggle } from "@/components/common";
 import { BooleanSetter } from "@/types/react";
 

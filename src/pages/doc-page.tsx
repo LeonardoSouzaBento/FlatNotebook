@@ -1,20 +1,22 @@
 import {
   AddBlockButton,
   DocBlock,
+  DocHeader,
   Header,
   Summary,
   TopOptions,
 } from "@/components/doc-page";
 import { sampleDocument } from "@/data/sampleDocument";
 import { Block, Document } from "@/types/document";
-import React, { useCallback, useState } from "react";
+import type { FocusEvent } from "react";
+import { useCallback, useState } from "react";
 
-const DocumentPage: React.FC = () => {
+const DocPage = () => {
   const [doc, setDoc] = useState<Document>(sampleDocument);
   const [readOnly, setReadOnly] = useState(false);
 
   const handleTitleChange = useCallback(
-    (e: React.FocusEvent<HTMLHeadingElement>) => {
+    (e: FocusEvent<HTMLHeadingElement>) => {
       const newTitle = e.currentTarget.textContent || "";
       if (newTitle !== doc.title) {
         setDoc((d) => ({
@@ -28,7 +30,7 @@ const DocumentPage: React.FC = () => {
   );
 
   const handleSubtitleChange = useCallback(
-    (e: React.FocusEvent<HTMLHeadingElement>) => {
+    (e: FocusEvent<HTMLHeadingElement>) => {
       const newSub = e.currentTarget.textContent || "";
       if (newSub !== doc.subtitle) {
         setDoc((d) => ({
@@ -78,33 +80,18 @@ const DocumentPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      {/* Document content */}
       <main className="max-w-3xl mx-auto px-6 py-2">
         <TopOptions readOnly={readOnly} setReadOnly={setReadOnly} />
-        {/* Title H1 */}
-        <h1
-          contentEditable={!readOnly}
-          suppressContentEditableWarning
-          onBlur={handleTitleChange}
-          className={`px-1 rounded mb-2 ${readOnly ? "pointer-events-none" : "cursor-text"}`}
-        >
-          {doc.title}
-        </h1>
 
-        {/* Subtitle H2 */}
-        <h2
-          contentEditable={!readOnly}
-          suppressContentEditableWarning
-          onBlur={handleSubtitleChange}
-          className={`px-1 rounded mb-8 text-muted-foreground ${readOnly ? "pointer-events-none" : "cursor-text"}`}
-        >
-          {doc.subtitle || ""}
-        </h2>
+        <DocHeader
+          doc={doc}
+          readOnly={readOnly}
+          handleTitleChange={handleTitleChange}
+          handleSubtitleChange={handleSubtitleChange}
+        />
 
-        {/* Table of Contents */}
         <Summary blocks={doc.blocks} />
 
-        {/* Blocks */}
         <div className="space-y-1">
           {doc.blocks.map((block) => (
             <DocBlock
@@ -117,11 +104,9 @@ const DocumentPage: React.FC = () => {
           ))}
         </div>
       </main>
-
-      {/* FAB - Add chapter */}
       {!readOnly && <AddBlockButton addChapter={addChapter} />}
     </div>
   );
 };
 
-export default DocumentPage;
+export default DocPage;

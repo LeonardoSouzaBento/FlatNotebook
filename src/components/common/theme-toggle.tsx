@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Sun, Moon } from "lucide-react";
-import { Button } from "@/ui/button";
+import { Button } from "@/ui";
+import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
 
