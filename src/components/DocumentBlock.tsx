@@ -19,6 +19,7 @@ interface DocumentBlockProps {
   block: Block;
   onUpdate: (block: Block) => void;
   onDelete: (blockId: string) => void;
+  readOnly?: boolean;
 }
 
 const MAX_DEPTH = 6;
@@ -39,6 +40,7 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
   block,
   onUpdate,
   onDelete,
+  readOnly = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -177,18 +179,19 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
 
         {/* Title */}
         <div
-          contentEditable
+          contentEditable={!readOnly}
           suppressContentEditableWarning
           onBlur={handleTitleChange}
-          className={`flex-1 cursor-text rounded font-sans h${block.level}`}
+          onClick={readOnly ? toggleCollapse : undefined}
+          className={`flex-1 rounded font-sans h${block.level} ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
           role="heading"
           aria-level={block.level}
         >
           {block.title}
         </div>
 
-        {/* Action buttons on hover */}
-        {isHovered && (
+        {/* Action buttons on hover (hidden in read-only) */}
+        {isHovered && !readOnly && (
           <div className="flex items-center gap-1">
             {/* Add image button */}
             <button
@@ -250,10 +253,11 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
         <div className="pl-8">
           {/* Content */}
           <p
-            contentEditable
+            contentEditable={!readOnly}
             suppressContentEditableWarning
             onBlur={handleContentChange}
-            className="cursor-text rounded text-foreground/85 min-h-[1.5em] font-sans empty:before:content-['Escreva_aqui...'] empty:before:text-muted-foreground/50"
+            onClick={readOnly ? toggleCollapse : undefined}
+            className={`rounded text-foreground/85 min-h-[1.5em] font-sans empty:before:content-['Escreva_aqui...'] empty:before:text-muted-foreground/50 ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
           >
             {block.content}
           </p>
@@ -275,11 +279,12 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
               block={child}
               onUpdate={handleChildUpdate}
               onDelete={handleChildDelete}
+              readOnly={readOnly}
             />
           ))}
 
           {/* Add child block button */}
-          {canAddChildren && (
+          {canAddChildren && !readOnly && (
             <button
               onClick={addChildBlock}
               className="flex items-center gap-1.5 text-muted-foreground/60 hover:text-accent text-sm rounded hover:bg-muted transition-colors"

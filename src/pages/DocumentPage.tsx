@@ -4,9 +4,12 @@ import { sampleDocument } from "@/data/sampleDocument";
 import DocumentBlock from "@/components/DocumentBlock";
 import TableOfContents from "@/components/TableOfContents";
 import ThemeToggle from "@/components/ThemeToggle";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 
 const DocumentPage: React.FC = () => {
   const [doc, setDoc] = useState<Document>(sampleDocument);
+  const [readOnly, setReadOnly] = useState(false);
 
   const handleTitleChange = useCallback(
     (e: React.FocusEvent<HTMLHeadingElement>) => {
@@ -76,27 +79,36 @@ const DocumentPage: React.FC = () => {
 
       {/* Document content */}
       <main className="max-w-3xl mx-auto px-6 py-12">
-        {/* Theme toggle */}
-        <div className="flex justify-end mb-4">
+        {/* Controls */}
+        <div className="flex justify-end items-center gap-2 mb-4">
+          <Button
+            variant="default"
+            size="sm"
+            className="flex items-center gap-2"
+            onClick={() => setReadOnly((r) => !r)}
+          >
+            Somente leitura
+            <Switch checked={readOnly} onCheckedChange={setReadOnly} className="pointer-events-none" />
+          </Button>
           <ThemeToggle />
         </div>
 
         {/* Title H1 */}
         <h1
-          contentEditable
+          contentEditable={!readOnly}
           suppressContentEditableWarning
           onBlur={handleTitleChange}
-          className="cursor-text px-1 rounded mb-2"
+          className={`px-1 rounded mb-2 ${readOnly ? "pointer-events-none" : "cursor-text"}`}
         >
           {doc.title}
         </h1>
 
         {/* Subtitle H2 */}
         <h2
-          contentEditable
+          contentEditable={!readOnly}
           suppressContentEditableWarning
           onBlur={handleSubtitleChange}
-          className="cursor-text px-1 rounded mb-8 text-muted-foreground"
+          className={`px-1 rounded mb-8 text-muted-foreground ${readOnly ? "pointer-events-none" : "cursor-text"}`}
         >
           {doc.subtitle || ""}
         </h2>
@@ -112,21 +124,24 @@ const DocumentPage: React.FC = () => {
               block={block}
               onUpdate={handleBlockUpdate}
               onDelete={handleBlockDelete}
+              readOnly={readOnly}
             />
           ))}
         </div>
       </main>
 
       {/* FAB - Add chapter */}
-      <button
-        onClick={addChapter}
-        className="fixed bottom-8 right-8 w-14 h-14 bg-fab hover:bg-fab-hover text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
-        aria-label="Adicionar capítulo"
-      >
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-        </svg>
-      </button>
+      {!readOnly && (
+        <button
+          onClick={addChapter}
+          className="fixed bottom-8 right-8 w-14 h-14 bg-fab hover:bg-fab-hover text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+          aria-label="Adicionar capítulo"
+        >
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 };
