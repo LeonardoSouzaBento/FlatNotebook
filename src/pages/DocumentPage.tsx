@@ -95,20 +95,20 @@ const DocumentPage: React.FC = () => {
 
         {/* Title H1 */}
         <h1
-          contentEditable
+          contentEditable={!readOnly}
           suppressContentEditableWarning
           onBlur={handleTitleChange}
-          className="cursor-text px-1 rounded mb-2"
+          className={`px-1 rounded mb-2 ${readOnly ? "pointer-events-none" : "cursor-text"}`}
         >
           {doc.title}
         </h1>
 
         {/* Subtitle H2 */}
         <h2
-          contentEditable
+          contentEditable={!readOnly}
           suppressContentEditableWarning
           onBlur={handleSubtitleChange}
-          className="cursor-text px-1 rounded mb-8 text-muted-foreground"
+          className={`px-1 rounded mb-8 text-muted-foreground ${readOnly ? "pointer-events-none" : "cursor-text"}`}
         >
           {doc.subtitle || ""}
         </h2>
