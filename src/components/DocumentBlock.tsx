@@ -19,6 +19,7 @@ interface DocumentBlockProps {
   block: Block;
   onUpdate: (block: Block) => void;
   onDelete: (blockId: string) => void;
+  readOnly?: boolean;
 }
 
 const MAX_DEPTH = 6;
