@@ -179,10 +179,11 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
 
         {/* Title */}
         <div
-          contentEditable
+          contentEditable={!readOnly}
           suppressContentEditableWarning
           onBlur={handleTitleChange}
-          className={`flex-1 cursor-text rounded font-sans h${block.level}`}
+          onClick={readOnly ? toggleCollapse : undefined}
+          className={`flex-1 rounded font-sans h${block.level} ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
           role="heading"
           aria-level={block.level}
         >
