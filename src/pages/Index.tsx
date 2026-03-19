@@ -5,6 +5,7 @@ import { sampleDocument } from "@/data/sampleDocument";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Index: React.FC = () => {
   const navigate = useNavigate();
