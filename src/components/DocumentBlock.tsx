@@ -284,7 +284,7 @@ const DocumentBlock: React.FC<DocumentBlockProps> = ({
           ))}
 
           {/* Add child block button */}
-          {canAddChildren && (
+          {canAddChildren && !readOnly && (
             <button
               onClick={addChildBlock}
               className="flex items-center gap-1.5 text-muted-foreground/60 hover:text-accent text-sm rounded hover:bg-muted transition-colors"
