@@ -3,16 +3,16 @@ import exampleFallImage from "@/assets/example-fall.jpg";
 
 export const sampleDocument: Document = {
   id: "doc_001",
-  title: "A História da Redenção",
-  subtitle: "Um estudo bíblico",
+  title: "Curso de UI Design",
+  subtitle: "Um guia rápido, mas completo",
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   blocks: [
     {
       id: "cap1",
       level: 3,
-      title: "Introdução",
-      content: "Este capítulo apresenta o propósito do estudo.",
+      title: "Tipografia",
+      content: `Este capítulo apresenta o propósito do estudo.`,
       collapsed: false,
       children: [],
     },

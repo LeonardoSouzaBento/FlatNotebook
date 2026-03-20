@@ -30,22 +30,25 @@
   --color-border: hsl(0 7.14% 87%);
   --color-input-border: hsl(0 10.86% 71.3%);
   --color-input: hsl(0 5.43% 97.7%);
+  --color-light-bg: hsl(0, 0%, 100%);
+  --color-medium-bg: hsl(0, 0%, 98%);
+  --color-dark-bg: hsl(0, 0%, 95%);
   --color-primary-50: #faf2ed;
-  --color-primary-100: #f5e6da;
+  --color-primary-100: hsl(27, 57%, 91%);
   --color-primary-200: #e9cdb7;
   --color-primary-300: #dcb494;
   --color-primary-400: #ce9c72;
-  --color-primary-500: #be8551;
-  --color-primary-600: #ab6b2b; /*primary*/
-  --color-primary-700: #8c510f;
+  --color-primary-500: hsl(29, 46%, 53%);
+  --color-primary-600: hsl(30, 60%, 42%); /*primary*/
+  --color-primary-700: hsl(32, 81%, 30%);
   --color-primary-800: #693400;
-  --color-primary-900: #4a1800;
+  --color-primary-900: hsl(19, 100%, 15%);
   --color-primary-950: #3d0900;
-  --color-primary-1000: #340000;
+  --color-primary-1000: hsl(0, 100%, 10%);
   --color-destructive-200: #fecaca;
   --color-destructive-300: #fca5a5;
   --color-destructive-600: hsl(0, 72%, 51%);
-  --color-destructive-icon: hsla(0, 74%, 42%, 0.25);
+  --color-destructive-icon: hsla(0, 72%, 51%, 0.20);
   --color-destructive: #b91c1c;
   --color-destructive-700: #b91c1c;
   --color-destructive-800: #991b1b;
@@ -116,6 +119,13 @@
   --color-toc-bg: hsl(30 8% 14%);
   --color-fab-bg: hsl(30 55% 55%);
   --color-fab-hover: hsl(30 60% 48%);
+
+  --shadow-xs: 0 1px 4px hsla(30, 50%, 23%, 0.015);
+  --shadow-sm: 0 2px 8px hsla(30, 50%, 23%, 0.02);
+  --shadow-md: 0 4px 14px hsla(30, 50%, 23%, 0.028);
+  --shadow-lg: 0 8px 24px hsla(30, 50%, 23%, 0.036);
+  --shadow-xl: 0 14px 40px hsla(30, 50%, 23%, 0.045);
+  --shadow-selected-button: 0 3px 6px hsla(30, 50%, 23%, 0.2);
 }
 
 @layer base {
@@ -137,7 +147,7 @@
 
   body {
     overscroll-behavior-x: none;
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground bg-linear-to-br from-light-bg to-dark-bg;
   }
   html,
   body {
@@ -148,7 +158,9 @@
     display: none;
   }
 
-  
+  p {
+    cursor: default;
+  }
 }
 
 @layer components {

@@ -1,6 +1,7 @@
 import { Button } from "@/ui";
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Icon } from "@/ui";
 
 type Theme = "light" | "dark";
 
@@ -41,16 +42,17 @@ export const ThemeToggle = () => {
 
   return (
     <Button
+      data-rounded
       variant="ghost"
-      size="icon"
+      size="icon-sm"
       onClick={toggle}
       aria-label="Alternar tema"
     >
-      {theme === "dark" ? (
-        <Sun className="h-5 w-5" />
-      ) : (
-        <Moon className="h-5 w-5" />
-      )}
+      <Icon
+        Icon={theme === "dark" ? Sun : Moon}
+        size="lg"
+        strokeWidth="light"
+      />
     </Button>
   );
 };

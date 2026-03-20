@@ -1,3 +1,5 @@
+import { Button, Icon } from "@/ui";
+import { ChevronRight } from "lucide-react";
 import React from "react";
 
 interface CollapseToggleProps {
@@ -10,27 +12,20 @@ export const CollapseToggle: React.FC<CollapseToggleProps> = ({
   collapsed,
 }) => {
   return (
-    <button
+    <Button
       onClick={onClick}
-      className="shrink-0 size-8 flex items-center justify-center 
-      rounded-md hover:bg-muted text-muted-foreground transition-colors"
+      variant="transparent"
+      size="icon-sm"
+      className="text-muted-foreground"
       aria-label={collapsed ? "Expandir" : "Colapsar"}
     >
-      <svg
-        className={`size-3.75 transition-transform duration-200 ${
+      <Icon
+        Icon={ChevronRight}
+        className={`transition-transform duration-200 ${
           collapsed ? "" : "rotate-90"
         }`}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2.1}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M9 5l7 7-7 7"
-        />
-      </svg>
-    </button>
+        size="sm"
+      />
+    </Button>
   );
 };

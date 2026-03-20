@@ -1,6 +1,6 @@
 import type { Block } from "@/types/document";
 import { Button, Icon } from "@/ui";
-import { Copy } from "lucide-react";
+import { ArrowUpDown, Copy } from "lucide-react";
 import type { FocusEvent } from "react";
 import {
   AddChildBlockBtn,
@@ -51,10 +51,14 @@ export const BlockHeader: React.FC<BlockHeaderProps> = ({
             onDelete={() => onDelete(block.id)}
             block={block}
           />
+          <Button variant="transparent" size="icon-sm">
+            <Icon Icon={ArrowUpDown} strokeWidth="light" size="sm" />
+          </Button>
 
           <Button variant="transparent" size="icon-sm">
             <Icon Icon={Copy} strokeWidth="light" size="sm" />
           </Button>
+
 
           <AddImageButton onClick={handleImageAdd} />
 

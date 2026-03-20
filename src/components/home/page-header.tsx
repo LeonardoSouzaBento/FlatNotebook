@@ -9,15 +9,15 @@ import {
 
 export const PageHeader = () => {
   return (
-    <header className="border-b border-border">
+    <header className="shadow-sm/7">
       <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
         <div>
           <Logo>
-            <LogoLink>
+            <LogoLink className="text-h2 mb-1 gap-2">
               <LogoIcon />
-              <LogoTitle />
+              <LogoTitle className="text-h6 leading-none" />
             </LogoLink>
-            <LogoDescription>Seus documentos</LogoDescription>
+            <LogoDescription className="font-[350]">Seus documentos</LogoDescription>
           </Logo>
         </div>
         <ThemeToggle />

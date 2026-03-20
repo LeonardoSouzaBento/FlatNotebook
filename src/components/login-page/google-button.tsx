@@ -10,8 +10,8 @@ export const GoogleButton = () => {
 
   return (
     <Button
-      variant="outline"
-      className="w-full h-12 gap-3 btn-text"
+      variant="ghost"
+      className="w-full h-12 gap-3"
       onClick={handleGoogleLogin}
     >
       <svg className="w-5 h-5" viewBox="0 0 24 24">

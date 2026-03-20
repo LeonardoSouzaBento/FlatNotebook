@@ -13,13 +13,14 @@ export const DocsGrid = ({ documents }: DocsGridProps) => {
           <Link
             key={doc.id}
             to={`/document/${doc.id}`}
-            className="text-left border border-border rounded-lg p-5 hover:bg-muted transition-colors bg-card"
+            className="text-left rounded-lg p-5 transition-colors 
+            border border-border/50 bg-primary-50 hover:bg-primary-100/45"
           >
-            <h2 className="font-semibold text-foreground font-sans text-base truncate">
+            <h6 className="font-semibold text-foreground font-sans text-base truncate mb-1">
               {doc.title}
-            </h2>
+            </h6>
             {doc.subtitle && (
-              <p className="text-sm text-muted-foreground font-sans mt-1 truncate">
+              <p className="text-sm-button text-muted-foreground font-sans truncate">
                 {doc.subtitle}
               </p>
             )}

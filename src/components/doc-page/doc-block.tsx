@@ -21,7 +21,7 @@ interface DocBlockProps {
 }
 
 const classesByLevel = {
-  3: "border border-border/75 mb-6 pt-2 px-1.75 rounded-lg",
+  3: "shadow-sm/8 border border-border/25 mb-8 pt-2 px-1.75 rounded-lg",
   4: "mb-2 last:mb-0 pt-2 pb-0.5 rounded-md",
   5: "mb-4",
   6: "mb-1",

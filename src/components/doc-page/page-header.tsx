@@ -18,24 +18,22 @@ export const PageHeader = ({
 }) => {
   return (
     <header
-      className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm 
-      shadow-xs mb-10"
+      className="py-3 sticky top-0 z-10 bg-background/80 backdrop-blur-sm 
+      shadow-sm/5 mb-8"
     >
-      <div className="max-w-3xl mx-auto px-6 py-2 flex items-center justify-between">
+      <div className="max-w-3xl mx-auto px-6 flex items-center justify-between">
         <Logo>
-          <LogoLink>
-            <LogoIcon className="text-h5" />
-            <LogoTitle className="text-h6 font-semibold leading-none" />
+          <LogoLink className="text-h5 gap-1.5">
+            <LogoIcon />
+            <LogoTitle className="leading-none" />
           </LogoLink>
         </Logo>
-        <div className="flex justify-end items-center gap-2">
+        <div className="flex justify-end items-center gap-4">
           <Button
             asChild
             size="sm"
-            className={cn(
-              buttonVariants({ variant: "default", size: "sm" }),
-              "flex items-center gap-2 cursor-pointer",
-            )}
+            variant="ghost"
+            className="rounded-full pr-1"
             onClick={() => setReadOnly((r) => !r)}
           >
             <div>
