@@ -22,14 +22,6 @@ export const sampleDocument: Document = {
       title: "A Queda",
       content: "Descrição geral da queda do homem.",
       collapsed: false,
-      images: [
-        {
-          id: "img_001",
-          src: exampleFallImage,
-          alt: "A Queda do Homem - Adão e Eva no Jardim do Éden",
-          edits: {},
-        },
-      ],
       children: [
         {
           id: "sec2_1",
@@ -85,3 +77,14 @@ export const sampleDocument: Document = {
     },
   ],
 };
+
+/*
+      images: [
+        {
+          id: "img_001",
+          src: exampleFallImage,
+          alt: "A Queda do Homem - Adão e Eva no Jardim do Éden",
+          edits: {},
+        },
+      ],
+*/

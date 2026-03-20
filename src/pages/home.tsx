@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import { Document } from "@/types/document";
-import { sampleDocument } from "@/data/sampleDocument";
 import {
-  Header,
-  DocsGrid,
   AddDocButton,
   AddDocModal,
+  DocsGrid,
+  PageHeader,
 } from "@/components/home";
+import { useDocPageContext } from "@/contexts";
+import { Document } from "@/types/document";
+import { useState } from "react";
 
 const Home = () => {
-  const [documents, setDocuments] = useState<Document[]>([sampleDocument]);
+  const { documents, setDocuments } = useDocPageContext();
   const [modalOpen, setModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newSubtitle, setNewSubtitle] = useState("");
@@ -32,7 +32,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <PageHeader />
 
       <DocsGrid documents={documents} />
 

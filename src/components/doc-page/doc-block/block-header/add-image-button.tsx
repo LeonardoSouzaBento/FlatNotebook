@@ -1,5 +1,6 @@
 import React from "react";
 import { ImagePlus } from "lucide-react";
+import { Button, Icon } from "@/ui";
 
 interface AddImageButtonProps {
   onClick: () => void;
@@ -7,12 +8,13 @@ interface AddImageButtonProps {
 
 export const AddImageButton: React.FC<AddImageButtonProps> = ({ onClick }) => {
   return (
-    <button
+    <Button
+      variant="transparent"
+      size="icon-sm"
       onClick={onClick}
-      className="shrink-0 w-6 h-6 flex items-center justify-center rounded hover:bg-muted text-muted-foreground transition-colors"
       aria-label="Adicionar imagem"
     >
-      <ImagePlus className="w-3.5 h-3.5" />
-    </button>
+      <Icon Icon={ImagePlus} strokeWidth="light" />
+    </Button>
   );
 };

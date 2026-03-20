@@ -1,5 +1,5 @@
-import React from "react";
 import { Block } from "@/types/document";
+import { Button, Icon } from "@/ui";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,39 +12,45 @@ import {
   AlertDialogTrigger,
 } from "@/ui/alert-dialog";
 import { ScrollArea } from "@/ui/scroll-area";
+import { Trash } from "lucide-react";
+import React from "react";
 
 interface DeleteButtonWithModalProps {
   onDelete: () => void;
   block: Block;
-  renderPreview: (block: Block) => React.ReactNode;
 }
+
+const renderBlockPreview = (block: Block) => (
+  <div key={block.id} className="mb-2">
+    <div className={`font-sans font-semibold h${block.level}`}>
+      {block.title}
+    </div>
+    {block.content && (
+      <p className="text-sm text-muted-foreground">{block.content}</p>
+    )}
+    {block.children.length > 0 && (
+      <div className="ml-4 mt-1">
+        {block.children.map((child) => renderBlockPreview(child))}
+      </div>
+    )}
+  </div>
+);
 
 export const DeleteButtonWithModal: React.FC<DeleteButtonWithModalProps> = ({
   onDelete,
   block,
-  renderPreview,
 }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <button
-          className="shrink-0 w-6 h-6 flex items-center justify-center rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
-          aria-label="Remover bloco"
-        >
-          <svg
-            className="w-3.5 h-3.5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
+        <Button variant="transparent" size="icon-sm" aria-label="Remover bloco">
+          <Icon
+            Icon={Trash}
+            strokeWidth="light"
+            color="var(--color-destructive)"
+            fill="var(--color-destructive-icon)"
+          />
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -54,7 +60,7 @@ export const DeleteButtonWithModal: React.FC<DeleteButtonWithModalProps> = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <ScrollArea className="max-h-60 rounded-md border border-border bg-muted/30 p-4">
-          {renderPreview(block)}
+          {renderBlockPreview(block)}
         </ScrollArea>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>

@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@layer theme, base, typography, components, utilities;
+@layer theme, typography, base, components, utilities;
 
 @theme {
   /* Font families */
@@ -21,27 +21,49 @@
   --text-button: 0.942809em;
   --text-sm-button: 0.888889em;
   --text-lg-button: 1em;
-  
+
   --radius: 0.5rem;
+  --spacing-cap-offset: calc(1cap - ((1em - 1cap) / 2));
+  --spacing-ex-offset: calc(1ex - ((1em - 1cap) / 2));
+  --color-foreground: hsl(0 20% 19.5%);
+  --color-muted-foreground: hsl(0 12.29% 42%);
+  --color-border: hsl(0 7.14% 87%);
+  --color-input-border: hsl(0 10.86% 71.3%);
+  --color-input: hsl(0 5.43% 97.7%);
+  --color-primary-50: #faf2ed;
+  --color-primary-100: #f5e6da;
+  --color-primary-200: #e9cdb7;
+  --color-primary-300: #dcb494;
+  --color-primary-400: #ce9c72;
+  --color-primary-500: #be8551;
+  --color-primary-600: #ab6b2b; /*primary*/
+  --color-primary-700: #8c510f;
+  --color-primary-800: #693400;
+  --color-primary-900: #4a1800;
+  --color-primary-950: #3d0900;
+  --color-primary-1000: #340000;
+  --color-destructive-200: #fecaca;
+  --color-destructive-300: #fca5a5;
+  --color-destructive-600: hsl(0, 72%, 51%);
+  --color-destructive-icon: hsla(0, 74%, 42%, 0.25);
+  --color-destructive: #b91c1c;
+  --color-destructive-700: #b91c1c;
+  --color-destructive-800: #991b1b;
 
   --color-background: hsl(40 33% 97%);
-  --color-foreground: hsl(30 10% 15%);
   --color-card: hsl(40 25% 95%);
   --color-card-foreground: hsl(30 10% 15%);
   --color-popover: hsl(40 33% 97%);
   --color-popover-foreground: hsl(30 10% 15%);
-  --color-primary: hsl(30 60% 42%);
+  --color-primary: #8c510f;
   --color-primary-foreground: hsl(40 33% 97%);
   --color-secondary: hsl(35 20% 90%);
   --color-secondary-foreground: hsl(30 10% 25%);
   --color-muted: hsl(35 15% 92%);
-  --color-muted-foreground: hsl(30 8% 50%);
   --color-accent: hsl(30 45% 50%);
   --color-accent-foreground: hsl(40 33% 97%);
   --color-destructive: hsl(0 65% 55%);
   --color-destructive-foreground: hsl(40 33% 97%);
-  --color-border: hsl(35 15% 85%);
-  --color-input: hsl(35 15% 85%);
   --color-ring: hsl(30 60% 42%);
   --color-sidebar-background: hsl(40 25% 95%);
   --color-sidebar-foreground: hsl(30 10% 25%);
@@ -116,5 +138,25 @@
   body {
     overscroll-behavior-x: none;
     @apply bg-background text-foreground;
+  }
+  html,
+  body {
+    scrollbar-width: none;
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
+  }
+
+  
+}
+
+@layer components {
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .level-3 {
+    border: 1px solid hsl(var(--border));
   }
 }

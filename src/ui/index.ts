@@ -2,6 +2,7 @@ export * from "./alert-dialog";
 export * from "./button";
 export * from "./card";
 export * from "./dialog";
+export * from "./icon";
 export * from "./input";
 export * from "./label";
 export * from "./popover";

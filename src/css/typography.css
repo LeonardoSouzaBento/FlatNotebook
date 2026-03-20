@@ -1,6 +1,6 @@
 @import "./globals.css";
 
-@layer typography {
+@layer components {
   body {
     font-family: var(--font-body);
     font-size: 16px;

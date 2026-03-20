@@ -1,48 +1,35 @@
-import React, {
-  useState,
-  useCallback,
-  useRef,
-  FocusEvent,
-  ChangeEvent,
-} from "react";
 import { Block, BlockImage as BlockImageType } from "@/types/document";
-import { BlockImageItem } from "@/components/doc-page/block-image";
+import React, {
+  ChangeEvent,
+  FocusEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
-  CollapseToggle,
-  BlockTitle,
-  AddImageButton,
-  DeleteButtonWithModal,
   AddChildBlockBtn,
+  BlockHeader,
+  BlockImageItem,
 } from "./doc-block/index";
 
-
-
-interface DocumentBlockProps {
+interface DocBlockProps {
   block: Block;
   onUpdate: (block: Block) => void;
   onDelete: (blockId: string) => void;
   readOnly?: boolean;
 }
 
+const classesByLevel = {
+  3: "border border-border/75 mb-6 pt-2 px-1.75 rounded-lg",
+  4: "mb-2 last:mb-0 pt-2 pb-0.5 rounded-md",
+  5: "mb-4",
+  6: "mb-1",
+};
+
 const MAX_DEPTH = 6;
 
-const renderBlockPreview = (block: Block): React.ReactNode => (
-  <div key={block.id} className="mb-2">
-    <div className={`font-sans font-semibold h${block.level}`}>
-      {block.title}
-    </div>
-    {block.content && (
-      <p className="text-sm text-muted-foreground">{block.content}</p>
-    )}
-    {block.children.length > 0 && (
-      <div className="ml-4 mt-1">
-        {block.children.map((child) => renderBlockPreview(child))}
-      </div>
-    )}
-  </div>
-);
-
-export const DocBlock: React.FC<DocumentBlockProps> = ({
+export const DocBlock: React.FC<DocBlockProps> = ({
   block,
   onUpdate,
   onDelete,
@@ -160,40 +147,21 @@ export const DocBlock: React.FC<DocumentBlockProps> = ({
   return (
     <div
       id={`block-${block.id}`}
-      className="relative"
+      className={`relative ${classesByLevel[block.level]}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="flex items-center gap-2">
-        {/* collapse-toggle */}
-        <CollapseToggle onClick={toggleCollapse} collapsed={block.collapsed} />
-
-
-        {/* block-title */}
-        <BlockTitle
-          readOnly={readOnly}
-          onBlur={handleTitleChange}
-          onClick={readOnly ? toggleCollapse : undefined}
-          level={block.level}
-          title={block.title}
-        />
-
-
-        {isHovered && !readOnly && (
-          <div className="flex items-center gap-1">
-            {/* add-image-button */}
-            <AddImageButton onClick={handleImageAdd} />
-
-            {/* delete-button-with-modal */}
-            <DeleteButtonWithModal
-              onDelete={() => onDelete(block.id)}
-              block={block}
-              renderPreview={renderBlockPreview}
-            />
-
-          </div>
-        )}
-      </div>
+      <BlockHeader
+        block={block}
+        readOnly={readOnly}
+        handleTitleChange={handleTitleChange}
+        toggleCollapse={toggleCollapse}
+        handleImageAdd={handleImageAdd}
+        onDelete={onDelete}
+        isHovered={isHovered}
+        canAddChildren={canAddChildren}
+        addChildBlock={addChildBlock}
+      />
 
       <input
         ref={fileInputRef}
@@ -204,13 +172,13 @@ export const DocBlock: React.FC<DocumentBlockProps> = ({
       />
 
       {!block.collapsed && (
-        <div className="pl-8">
+        <div>
           <p
             contentEditable={!readOnly}
             suppressContentEditableWarning
             onBlur={handleContentChange}
             onClick={readOnly ? toggleCollapse : undefined}
-            className={`rounded text-foreground/85 min-h-[1.5em] font-sans empty:before:content-['Escreva_aqui...'] empty:before:text-muted-foreground/50 ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
+            className={`px-9 pb-4 rounded text-foreground/85 min-h-[1.5em] font-sans empty:before:content-['Escreva_aqui...'] empty:before:text-muted-foreground/50 ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
           >
             {block.content}
           </p>
@@ -233,14 +201,6 @@ export const DocBlock: React.FC<DocumentBlockProps> = ({
               readOnly={readOnly}
             />
           ))}
-
-          {/* add-child-block-btn */}
-          <AddChildBlockBtn
-            canAddChildren={canAddChildren}
-            readOnly={readOnly}
-            onClick={addChildBlock}
-            level={block.level}
-          />
         </div>
       )}
     </div>

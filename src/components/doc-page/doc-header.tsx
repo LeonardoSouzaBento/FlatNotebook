@@ -20,17 +20,16 @@ export const DocHeader = ({
         contentEditable={!readOnly}
         suppressContentEditableWarning
         onBlur={handleTitleChange}
-        className={`px-1 rounded mb-2 ${readOnly ? "pointer-events-none" : "cursor-text"}`}
+        className={`px-1 rounded mb-2.25 ${readOnly ? "pointer-events-none" : "cursor-text"}`}
       >
         {doc.title}
       </h1>
 
-      {/* Subtitle H2 */}
       <h2
         contentEditable={!readOnly}
         suppressContentEditableWarning
         onBlur={handleSubtitleChange}
-        className={`px-1 rounded mb-8 text-muted-foreground ${readOnly ? "pointer-events-none" : "cursor-text"}`}
+        className={`px-1 rounded mb-6 text-muted-foreground ${readOnly ? "pointer-events-none" : "cursor-text"}`}
       >
         {doc.subtitle || ""}
       </h2>
