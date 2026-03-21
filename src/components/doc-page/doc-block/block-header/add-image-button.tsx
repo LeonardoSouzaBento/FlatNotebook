@@ -10,7 +10,7 @@ export const AddImageButton: React.FC<AddImageButtonProps> = ({ onClick }) => {
   return (
     <Button
       variant="transparent"
-      size="icon-sm"
+      size="icon"
       onClick={onClick}
       aria-label="Adicionar imagem"
     >

@@ -9,7 +9,9 @@ export const CreateAccountButton = ({ handleCreateAccount }: Props) => {
       style={{ fontSize: "var(--text-xs)" }}
     >
       Não tem conta?{" "}
-      <button className="text-accent hover:underline">Criar conta</button>
+      <button className="text-primary-800 underline underline-offset-2 decoration-[1.5px]">
+        Criar conta
+      </button>
     </p>
   );
 };

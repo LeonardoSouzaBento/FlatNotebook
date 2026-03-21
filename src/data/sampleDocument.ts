@@ -19,7 +19,7 @@ export const sampleDocument: Document = {
     {
       id: "cap2",
       level: 3,
-      title: "A Queda",
+      title: "Cores",
       content: "Descrição geral da queda do homem.",
       collapsed: false,
       children: [

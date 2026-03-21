@@ -41,13 +41,13 @@ export interface OptionalIconProps extends Omit<IconProps, "Icon"> {
 const LogoIcon = ({
   className,
   size = "md",
-  strokeWidth = "medium",
+  strokeWidth = "normal",
   ...props
 }: OptionalIconProps) => {
   return (
     <Icon
       Icon={ListCollapse}
-      className={cn(className)}
+      className={cn("mb-px", className)}
       size={size}
       strokeWidth={strokeWidth}
       {...props}
@@ -56,17 +56,16 @@ const LogoIcon = ({
 };
 
 //title
-//
 const LogoTitle = ({ className, ...props }: ComponentProps<"h1">) => {
   return (
     <h1
       {...props}
       className={cn(
-        "text-primary-700 tracking-tight font-[570] text-base",
+        "tracking-tight font-[566] text-base flex gap-[0.33ex] leading-none",
         className,
       )}
     >
-      FlatNotebook
+      <span>Flat</span> <span>Notebook</span>
     </h1>
   );
 };
@@ -75,7 +74,7 @@ const LogoTitle = ({ className, ...props }: ComponentProps<"h1">) => {
 const LogoDescription = ({ className, ...props }: ComponentProps<"p">) => {
   return (
     <p
-      className={cn("text-muted-foreground font-[370]", className)}
+      className={cn("text-muted-foreground font-normal", className)}
       {...props}
     />
   );

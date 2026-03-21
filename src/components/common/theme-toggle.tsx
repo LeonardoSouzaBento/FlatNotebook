@@ -47,11 +47,13 @@ export const ThemeToggle = () => {
       size="icon-sm"
       onClick={toggle}
       aria-label="Alternar tema"
+      className="shadow-xs"
     >
       <Icon
         Icon={theme === "dark" ? Sun : Moon}
-        size="lg"
+        size="sm"
         strokeWidth="light"
+        fill="currentColor"
       />
     </Button>
   );

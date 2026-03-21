@@ -24,8 +24,8 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-6">
       <div className="w-full max-w-md space-y-8 rounded-2xl">
-        <Logo className="items-center mx-auto" >
-          <LogoLink to="/login" className="text-h1-hero">
+        <Logo className="items-center gap-3 mx-auto mb-10" >
+          <LogoLink to="/login" className="text-h1-hero mr-1">
             <LogoIcon strokeWidth="medium" />
             <LogoTitle />
           </LogoLink>

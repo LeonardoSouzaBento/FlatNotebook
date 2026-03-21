@@ -43,12 +43,13 @@ export const DeleteButtonWithModal: React.FC<DeleteButtonWithModalProps> = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="transparent" size="icon-sm" aria-label="Remover bloco">
+        <Button variant="transparent" size="icon" aria-label="Remover bloco">
           <Icon
             Icon={Trash}
             strokeWidth="light"
             color="var(--color-destructive)"
             fill="var(--color-destructive-icon)"
+            size="sm"
           />
         </Button>
       </AlertDialogTrigger>

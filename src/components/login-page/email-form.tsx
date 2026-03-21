@@ -26,7 +26,6 @@ export const EmailForm = () => {
           placeholder="seu@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="h-11"
         />
       </div>
       <div>
@@ -41,10 +40,9 @@ export const EmailForm = () => {
           placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="h-11"
         />
       </div>
-      <Button type="submit" className="w-full h-11 btn-text">
+      <Button type="submit" className="w-full mt-6">
         Entrar
       </Button>
     </form>

@@ -4,7 +4,9 @@
 @theme {
   /* Font families */
   --font-heading: "Inter", -apple-system, sans-serif;
-  --font-body: "Inter", -apple-system, sans-serif;
+  --font-body:
+    ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
 
   /* Font sizes */
   --text-xs: 0.790123em;
@@ -22,6 +24,14 @@
   --text-sm-button: 0.888889em;
   --text-lg-button: 1em;
 
+  --breakpoint-bk-320: 320px;
+  --breakpoint-bk-375: 375px;
+  --breakpoint-bk-430: 430px;
+  --breakpoint-bk-576: 576px;
+  --breakpoint-bk-700: 700px;
+  --breakpoint-bk-840: 840px;
+  --breakpoint-bk-980: 980px;
+
   --radius: 0.5rem;
   --spacing-cap-offset: calc(1cap - ((1em - 1cap) / 2));
   --spacing-ex-offset: calc(1ex - ((1em - 1cap) / 2));
@@ -31,8 +41,8 @@
   --color-input-border: hsl(0 10.86% 71.3%);
   --color-input: hsl(0 5.43% 97.7%);
   --color-light-bg: hsl(0, 0%, 100%);
-  --color-medium-bg: hsl(0, 0%, 98%);
-  --color-dark-bg: hsl(0, 0%, 95%);
+  --color-medium-bg: hsl(0, 0%, 97%);
+  --color-dark-bg: hsl(0, 0%, 96%);
   --color-primary-50: #faf2ed;
   --color-primary-100: hsl(27, 57%, 91%);
   --color-primary-200: #e9cdb7;
@@ -48,10 +58,11 @@
   --color-destructive-200: #fecaca;
   --color-destructive-300: #fca5a5;
   --color-destructive-600: hsl(0, 72%, 51%);
-  --color-destructive-icon: hsla(0, 72%, 51%, 0.20);
+  --color-destructive-icon: hsla(0, 72%, 51%, 0.2);
   --color-destructive: #b91c1c;
   --color-destructive-700: #b91c1c;
   --color-destructive-800: #991b1b;
+  --color-selected: hsl(230, 100%, 82%);
 
   --color-background: hsl(40 33% 97%);
   --color-card: hsl(40 25% 95%);
@@ -83,6 +94,13 @@
   --color-toc-bg: hsl(35 20% 94%);
   --color-fab-bg: hsl(30 60% 42%);
   --color-fab-hover: hsl(30 65% 36%);
+
+  --shadow-xs: 0 1px 4px hsla(30, 50%, 23%, 0.015);
+  --shadow-sm: 0 2px 8px hsla(30, 50%, 23%, 0.02);
+  --shadow-md: 0 4px 14px hsla(30, 50%, 23%, 0.028);
+  --shadow-lg: 0 8px 24px hsla(30, 50%, 23%, 0.036);
+  --shadow-xl: 0 14px 40px hsla(30, 50%, 23%, 0.045);
+  --shadow-selected: 0 3px 6px hsla(230, 50%, 23%, 0.2);
 }
 
 .dark {
@@ -119,13 +137,6 @@
   --color-toc-bg: hsl(30 8% 14%);
   --color-fab-bg: hsl(30 55% 55%);
   --color-fab-hover: hsl(30 60% 48%);
-
-  --shadow-xs: 0 1px 4px hsla(30, 50%, 23%, 0.015);
-  --shadow-sm: 0 2px 8px hsla(30, 50%, 23%, 0.02);
-  --shadow-md: 0 4px 14px hsla(30, 50%, 23%, 0.028);
-  --shadow-lg: 0 8px 24px hsla(30, 50%, 23%, 0.036);
-  --shadow-xl: 0 14px 40px hsla(30, 50%, 23%, 0.045);
-  --shadow-selected-button: 0 3px 6px hsla(30, 50%, 23%, 0.2);
 }
 
 @layer base {
@@ -142,12 +153,13 @@
 
   button,
   a {
-    cursor: pointer;
+    @apply cursor-pointer min-h-8 font-medium font-heading;
   }
 
   body {
     overscroll-behavior-x: none;
-    @apply bg-background text-foreground bg-linear-to-br from-light-bg to-dark-bg;
+    @apply min-h-screen text-foreground
+    bg-linear-to-br from-light-bg via-medium-bg to-dark-bg;
   }
   html,
   body {

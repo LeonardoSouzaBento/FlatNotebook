@@ -18,7 +18,7 @@ export const DocSummary: React.FC<SummaryProps> = ({ blocks }) => {
   };
 
   return (
-    <div className="bg-toc-bg rounded-lg py-2.5 px-2 mb-8">
+    <div className="bg-muted/66 rounded-lg py-2.5 px-2 mb-6">
       <button
         onClick={() => setCollapsed(!collapsed)}
         className="flex items-center gap-1.25 w-full text-left"
@@ -36,23 +36,24 @@ export const DocSummary: React.FC<SummaryProps> = ({ blocks }) => {
           </div>
         </Button>
 
-        <span className="font-[375] text-muted-foreground text-lg uppercase tracking-wider">
+        <span className="font-normal text-muted-foreground text-lg uppercase tracking-wider">
           Sumário
         </span>
       </button>
 
       {!collapsed && (
-        <nav className="mt-3 space-y-1">
+        <nav className="mt-2 space-y-1">
           {blocks.map((block, index) => (
-            <button
+            <Button
+              variant="transparent"
+              size="sm"
               key={block.id}
               onClick={() => handleClick(block.id)}
-              className="block w-full text-left px-2 py-1 hover:bg-surface-hover text-foreground/80 hover:text-foreground transition-colors"
-              style={{ fontSize: "var(--text-base)" }}
+              className="block w-full text-left px-3 hover:bg-primary-50 transition-colors"
             >
-              <span className="text-muted-foreground mr-2">{index + 1}</span>
+              <span className="mr-2 font-[350]">{index + 1}</span>
               {block.title}
-            </button>
+            </Button>
           ))}
         </nav>
       )}

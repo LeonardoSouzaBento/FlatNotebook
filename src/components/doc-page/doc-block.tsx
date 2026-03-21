@@ -3,47 +3,52 @@ import React, {
   ChangeEvent,
   FocusEvent,
   useCallback,
-  useEffect,
   useRef,
   useState,
 } from "react";
-import {
-  AddChildBlockBtn,
-  BlockHeader,
-  BlockImageItem,
-} from "./doc-block/index";
+import { BlockHeader, BlockImageItem } from "./doc-block/index";
+import { StateSetter } from "@/types/react";
+import { Separator } from "@/ui";
+// import { log } from "console";
 
 interface DocBlockProps {
   block: Block;
   onUpdate: (block: Block) => void;
   onDelete: (blockId: string) => void;
   readOnly?: boolean;
+  selectedBlock: string;
+  setSelectedBlock: StateSetter<string>;
 }
 
 const classesByLevel = {
-  3: "shadow-sm/8 border border-border/25 mb-8 pt-2 px-1.75 rounded-lg",
-  4: "mb-2 last:mb-0 pt-2 pb-0.5 rounded-md",
-  5: "mb-4",
-  6: "mb-1",
+  3: "pt-2 pb-1.25 mb-4 ",
+  4: "pt-2 pb-0.5 rounded-md",
+  5: "pt-2.5 pb-0.75 mb-0 last:mb-0",
+  6: "pt-2.25 pb-0.5",
 };
 
-const MAX_DEPTH = 6;
+// const MAX_DEPTH = 6;
 
-export const DocBlock: React.FC<DocBlockProps> = ({
+export const DocBlock = ({
   block,
   onUpdate,
   onDelete,
   readOnly = false,
-}) => {
-  const [isHovered, setIsHovered] = useState(false);
+  selectedBlock,
+  setSelectedBlock,
+}: DocBlockProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleBlockClick = useCallback(() => {
+    setSelectedBlock(block.id);
+  }, [block.id]);
 
   const toggleCollapse = useCallback(() => {
     onUpdate({ ...block, collapsed: !block.collapsed });
   }, [block, onUpdate]);
 
   const handleTitleChange = useCallback(
-    (e: FocusEvent<HTMLElement>) => {
+    (e: FocusEvent<HTMLHeadingElement>) => {
       const newTitle = e.currentTarget.textContent || "";
       if (newTitle !== block.title) {
         onUpdate({ ...block, title: newTitle });
@@ -79,20 +84,6 @@ export const DocBlock: React.FC<DocBlockProps> = ({
     },
     [block, onUpdate],
   );
-
-  const addChildBlock = useCallback(() => {
-    const childLevel = block.level + 1;
-    if (childLevel > MAX_DEPTH) return;
-    const newChild: Block = {
-      id: `block_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-      level: childLevel,
-      title: "Novo bloco",
-      content: "",
-      collapsed: false,
-      children: [],
-    };
-    onUpdate({ ...block, children: [...block.children, newChild] });
-  }, [block, onUpdate]);
 
   const handleImageAdd = useCallback(() => {
     fileInputRef.current?.click();
@@ -142,27 +133,24 @@ export const DocBlock: React.FC<DocBlockProps> = ({
     [block, onUpdate],
   );
 
-  const canAddChildren = block.level < MAX_DEPTH;
-
   return (
     <div
       id={`block-${block.id}`}
-      className={`relative ${classesByLevel[block.level]}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={`relative rounded-lg ${classesByLevel[block.level]}
+        ${block.id === selectedBlock ? "bg-selected/10 shadow-selected/12" : ""}`}
+      onClick={(e) => {
+        e.stopPropagation();
+        handleBlockClick();
+        console.log("selectedBlock", block.id);
+      }}
     >
       <BlockHeader
         block={block}
         readOnly={readOnly}
         handleTitleChange={handleTitleChange}
         toggleCollapse={toggleCollapse}
-        handleImageAdd={handleImageAdd}
-        onDelete={onDelete}
-        isHovered={isHovered}
-        canAddChildren={canAddChildren}
-        addChildBlock={addChildBlock}
+        selectedBlock={selectedBlock}
       />
-
       <input
         ref={fileInputRef}
         type="file"
@@ -170,7 +158,6 @@ export const DocBlock: React.FC<DocBlockProps> = ({
         className="hidden"
         onChange={handleFileChange}
       />
-
       {!block.collapsed && (
         <div>
           <p
@@ -178,11 +165,13 @@ export const DocBlock: React.FC<DocBlockProps> = ({
             suppressContentEditableWarning
             onBlur={handleContentChange}
             onClick={readOnly ? toggleCollapse : undefined}
-            className={`px-9 pb-4 rounded text-foreground/85 min-h-[1.5em] font-sans empty:before:content-['Escreva_aqui...'] empty:before:text-muted-foreground/50 ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
+            className={`rounded text-foreground/85 min-h-[1.5em]
+                empty:before:content-['Escreva_aqui...'] pl-9.5 pb-0.5
+                empty:before:text-muted-foreground/50
+                ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
           >
             {block.content}
           </p>
-
           {(block.images || []).map((image) => (
             <BlockImageItem
               key={image.id}
@@ -191,7 +180,6 @@ export const DocBlock: React.FC<DocBlockProps> = ({
               onDelete={handleImageDelete}
             />
           ))}
-
           {block.children.map((child) => (
             <DocBlock
               key={child.id}
@@ -199,6 +187,8 @@ export const DocBlock: React.FC<DocBlockProps> = ({
               onUpdate={handleChildUpdate}
               onDelete={handleChildDelete}
               readOnly={readOnly}
+              selectedBlock={selectedBlock}
+              setSelectedBlock={setSelectedBlock}
             />
           ))}
         </div>

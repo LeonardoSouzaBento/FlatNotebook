@@ -29,7 +29,7 @@ export const DocHeader = ({
         contentEditable={!readOnly}
         suppressContentEditableWarning
         onBlur={handleSubtitleChange}
-        className={`px-1 rounded mb-6 text-muted-foreground ${readOnly ? "pointer-events-none" : "cursor-text"}`}
+        className={`px-1 rounded mb-8 text-muted-foreground ${readOnly ? "pointer-events-none" : "cursor-text"}`}
       >
         {doc.subtitle || ""}
       </h2>

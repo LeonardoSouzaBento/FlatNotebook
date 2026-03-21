@@ -6,12 +6,12 @@ import { cn } from "@/lib/utils";
 export type ButtonVariants = VariantProps<typeof buttonVariants>;
 
 export const buttonVariants = cva(
-  "w-auto tracking-wide inline-flex items-center justify-center gap-2 font-medium rounded-md ring-offset-background transition-colors disabled:pointer-events-none disabled:cursor-not-allowed cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0 relative data-w-full:w-full data-rounded:rounded-full focus:outline-none data-option:rounded-full data-black:text-foreground data-option:text-sm data-option:px-[0.64em]",
+  "w-auto tracking-wide inline-flex items-center justify-center gap-2 font-medium rounded-md ring-offset-background transition-colors disabled:pointer-events-none disabled:cursor-not-allowed cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0 relative data-w-full:w-full data-rounded:rounded-full focus:outline-none data-option:rounded-full data-black:text-foreground data-option:text-sm data-option:px-[0.64em] leading-none",
   {
     variants: {
       variant: {
         default:
-          "bg-primary hover:bg-primary/90 text-primary-foreground disabled:bg-neutral-300 disabled:text-neutral-500/80 active:bg-primary-800 hover:bg-primary-600 focus:border-3 focus:border-selected/75",
+          "bg-primary hover:bg-primary-600 text-primary-foreground disabled:bg-neutral-300 disabled:text-neutral-500/80 active:bg-primary-800 hover:bg-primary-600 focus:border-3 focus:border-selected/75",
         outline:
           "border-2 border-primary/88 text-primary bg-transparent hover:bg-gray-50 shadow-xs/12 disabled:bg-neutral-100 disabled:border-neutral-300 disabled:text-neutral-500/75 hover:bg-primary-50 focus:outline-selected/70 focus:outline-2 active:bg-primary-100",
         ghost:
@@ -19,14 +19,14 @@ export const buttonVariants = cva(
         transparent: "bg-transparent text-primary-800 hover:bg-primary-100/70",
         link: "text-primary underline-offset-4 hover:underline",
         secondary:
-          "bg-primary-50 text-primary hover:bg-primary-100 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:border-none hover:bg-primary-50/75 focus:outline-3 focus:outline-selected/75 active:bg-primary-100",
+          "bg-primary-100/75 text-primary hover:bg-primary-100 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:border-none hover:bg-primary-50/75 focus:outline-3 focus:outline-selected/75 active:bg-primary-100",
         destructive:
           "bg-red-700 text-red-50 hover:bg-red-600 hover:bg-red-600 focus:outline-3 focus:outline-red-200 active:bg-red-800",
       },
       size: {
-        sm: "h-8 text-sm-button",
-        default: `h-9`,
-        lg: "h-10 text-lg-button",
+        sm: "h-9 text-sm-button",
+        default: `h-10`,
+        lg: "h-11 text-lg-button",
         "icon-sm": "size-8",
         icon: "size-9",
         "icon-md": "size-10",

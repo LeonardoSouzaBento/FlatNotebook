@@ -5,23 +5,28 @@ import React from "react";
 interface CollapseToggleProps {
   onClick: () => void;
   collapsed: boolean;
+  selectedBlock: string;
+  blockId: string;
 }
 
 export const CollapseToggle: React.FC<CollapseToggleProps> = ({
   onClick,
   collapsed,
+  selectedBlock,
+  blockId,
 }) => {
   return (
     <Button
       onClick={onClick}
       variant="transparent"
       size="icon-sm"
-      className="text-muted-foreground"
+      className={`w-6 text-muted-foreground rounded-full -mt-1 
+        ${selectedBlock === blockId ? "hover:bg-selected/14" : ""}`}
       aria-label={collapsed ? "Expandir" : "Colapsar"}
     >
       <Icon
         Icon={ChevronRight}
-        className={`transition-transform duration-200 ${
+        className={`transition-transform duration-200 ml-px ${
           collapsed ? "" : "rotate-90"
         }`}
         size="sm"

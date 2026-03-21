@@ -16,8 +16,8 @@ export const AddChildBlockBtn: React.FC<AddChildBlockBtnProps> = ({
   if (!canAddChildren || readOnly) return null;
 
   return (
-    <Button variant="transparent" size="icon-sm" onClick={onClick}>
-      <Icon Icon={Plus} strokeWidth="light" />
+    <Button variant="transparent" size="icon" onClick={onClick}>
+      <Icon Icon={Plus} strokeWidth="light" size="md"/>
     </Button>
   );
 };
