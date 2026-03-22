@@ -1,5 +1,4 @@
 import { Document } from "@/types/document";
-import exampleFallImage from "@/assets/example-fall.jpg";
 
 export const sampleDocument: Document = {
   id: "doc_001",

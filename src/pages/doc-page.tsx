@@ -6,11 +6,17 @@ import {
 } from "@/components/doc-page";
 import { BlockActions } from "@/components/doc-page/doc-block/index";
 import { useDocPageContext } from "@/contexts";
-import { Block, BlockImage as BlockImageType } from "@/types/document";
+import { Block, BlockImage as BlockImageType, Document } from "@/types/document";
 import {
   deleteBlockFromTree,
   findBlockInTree,
   updateBlockInTree,
+  reorderBlocksInTree,
+  addSiblingBlockInTree,
+  findSiblings,
+  generateNextId,
+  generateFirstChildId,
+  getDefaultTitle,
 } from "@/utils/block-utils";
 import type { ChangeEvent, FocusEvent } from "react";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
@@ -22,7 +28,9 @@ const DocPage = () => {
   const { id } = useParams();
   const { documents, doc, setDoc } = useDocPageContext();
   const [readOnly, setReadOnly] = useState(false);
-  const [selectedBlock, setSelectedBlock] = useState<string>("cap1");
+  const [selectedBlock, setSelectedBlock] = useState<string>("");
+  const [isReordering, setIsReordering] = useState(false);
+  const [draftDoc, setDraftDoc] = useState<Document | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const selectedBlockObj = useMemo(() => {
@@ -35,10 +43,20 @@ const DocPage = () => {
     const foundDoc = documents.find((d) => String(d.id) === id);
     if (foundDoc) {
       setDoc(foundDoc);
+      // Select the first block if none is selected
+      if (foundDoc.blocks.length > 0 && !selectedBlock) {
+        setSelectedBlock(foundDoc.blocks[0].id);
+      }
     } else {
       setDoc(null);
     }
   }, [id, documents, setDoc]);
+
+  useEffect(() => {
+    if (draftDoc) {
+      console.log("Draft Doc State:", draftDoc);
+    }
+  }, [draftDoc]);
 
   const handleTitleChange = useCallback(
     (e: FocusEvent<HTMLHeadingElement>) => {
@@ -102,24 +120,64 @@ const DocPage = () => {
     [setDoc],
   );
 
-  const addChapter = useCallback(() => {
+  const handleReorder = useCallback(
+    (targetId: string) => {
+      if (!selectedBlock) return;
+      setDoc((d) => {
+        if (!d) return d;
+        setIsReordering(false);
+        return {
+          ...d,
+          updatedAt: new Date().toISOString(),
+          blocks: reorderBlocksInTree(d.blocks, selectedBlock, targetId),
+        };
+      });
+    },
+    [selectedBlock, setDoc],
+  );
+
+  const handleDuplicateBlock = useCallback(() => {
+    if (!selectedBlockObj) return;
+
+    const siblings = findSiblings(doc?.blocks || [], selectedBlockObj.id) || [];
+    const lastSibling = siblings[siblings.length - 1];
+    const newId = generateNextId(lastSibling.id);
+
     const newBlock: Block = {
-      id: `block_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-      level: 3,
-      title: "Novo capítulo",
+      id: newId,
+      level: selectedBlockObj.level,
+      title: getDefaultTitle(selectedBlockObj.level),
       content: "",
       collapsed: false,
       children: [],
     };
-    setDoc((d) => {
-      if (!d) return d;
-      return {
-        ...d,
+
+    setDraftDoc((d) => {
+      const targetDoc = d || doc;
+      if (!targetDoc) return null;
+      
+      const updatedDoc = {
+        ...targetDoc,
         updatedAt: new Date().toISOString(),
-        blocks: [...d.blocks, newBlock],
+        blocks: addSiblingBlockInTree(targetDoc.blocks, selectedBlockObj.id, newBlock),
       };
+      
+      console.log("Draft Doc Update (Duplication):", updatedDoc);
+      return updatedDoc;
     });
-  }, [setDoc]);
+
+    // setSelectedBlock(newBlock.id);
+
+    // Scroll to the new block after selection
+    /*
+    setTimeout(() => {
+      const element = document.getElementById(`block-${newBlock.id}`);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 100);
+    */
+  }, [selectedBlockObj, doc]);
 
   // Handlers for selected block toolbar in footer
 
@@ -158,10 +216,18 @@ const DocPage = () => {
     if (!block) return;
     const childLevel = block.level + 1;
     if (childLevel > MAX_DEPTH) return;
+
+    let newId: string;
+    if (block.children && block.children.length > 0) {
+      newId = generateNextId(block.children[block.children.length - 1].id);
+    } else {
+      newId = generateFirstChildId(block);
+    }
+
     const newChild: Block = {
-      id: `block_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      id: newId,
       level: childLevel,
-      title: "Novo bloco",
+      title: getDefaultTitle(childLevel),
       content: "",
       collapsed: false,
       children: [],
@@ -196,19 +262,25 @@ const DocPage = () => {
         <DocSummary blocks={doc.blocks} />
 
         <div>
-          {doc.blocks.map((block) => {
-            return (
-              <DocBlock
-                key={block.id}
-                block={block}
-                onUpdate={handleBlockUpdate}
-                onDelete={handleBlockDelete}
-                readOnly={readOnly}
-                selectedBlock={selectedBlock}
-                setSelectedBlock={setSelectedBlock}
-              />
-            );
-          })}
+          {doc.blocks
+            .slice()
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+            .map((block) => {
+              return (
+                <DocBlock
+                  key={block.id}
+                  block={block}
+                  onUpdate={handleBlockUpdate}
+                  onDelete={handleBlockDelete}
+                  readOnly={readOnly}
+                  selectedBlock={selectedBlock}
+                  setSelectedBlock={setSelectedBlock}
+                  isReordering={isReordering}
+                  selectedBlockLevel={selectedBlockObj?.level}
+                  onReorder={handleReorder}
+                />
+              );
+            })}
         </div>
       </main>
 
@@ -233,10 +305,13 @@ const DocPage = () => {
               handleImageAdd={handleSelectedBlockImageAdd}
               canAddChildren={canAddChildren}
               addChildBlock={handleSelectedBlockAddChild}
+              isReordering={isReordering}
+              setIsReordering={setIsReordering}
+              onDuplicate={handleDuplicateBlock}
             />
           ) : (
-            <span className="text-muted-foreground text-sm">
-              Selecione um bloco para editar
+            <span className="text-sm size-full pb-px flex items-center justify-center">
+              Clique em um bloco para editar
             </span>
           )}
         </footer>

@@ -18,10 +18,13 @@ interface DocBlockProps {
   readOnly?: boolean;
   selectedBlock: string;
   setSelectedBlock: StateSetter<string>;
+  isReordering?: boolean;
+  selectedBlockLevel?: number;
+  onReorder?: (targetId: string) => void;
 }
 
 const classesByLevel = {
-  3: "pt-2 pb-1.25 mb-4 ",
+  3: "pt-2 pb-1.25 mb-4 last:mb-0",
   4: "pt-2 pb-0.5 rounded-md",
   5: "pt-2.5 pb-0.75 mb-0 last:mb-0",
   6: "pt-2.25 pb-0.5",
@@ -36,12 +39,11 @@ export const DocBlock = ({
   readOnly = false,
   selectedBlock,
   setSelectedBlock,
+  isReordering,
+  selectedBlockLevel,
+  onReorder,
 }: DocBlockProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleBlockClick = useCallback(() => {
-    setSelectedBlock(block.id);
-  }, [block.id]);
 
   const toggleCollapse = useCallback(() => {
     onUpdate({ ...block, collapsed: !block.collapsed });
@@ -133,15 +135,40 @@ export const DocBlock = ({
     [block, onUpdate],
   );
 
+  const hasChildSelected = useCallback(
+    (b: Block): boolean => {
+      return b.children.some(
+        (c) =>
+          c.id === selectedBlock ||
+          (c.children.length > 0 && hasChildSelected(c)),
+      );
+    },
+    [selectedBlock],
+  );
+
+  function getClassesByLevel(level: number) {
+    const byLevel = classesByLevel[level as keyof typeof classesByLevel] || "";
+    const isSelected = block.id === selectedBlock;
+    const selected = isSelected
+      ? "bg-selected/8 shadow-selected/15 [&_p]:bg-transparent [&_div[contenteditable]]:bg-transparent"
+      : "";
+
+    const childIsSelected = level === 3 && hasChildSelected(block);
+    const opacity =
+      !readOnly && level === 3 && !isSelected && !childIsSelected
+        ? "opacity-60 transition-opacity duration-200"
+        : "";
+
+    return `${byLevel} ${selected} ${opacity}`;
+  }
+
   return (
     <div
       id={`block-${block.id}`}
-      className={`relative rounded-lg ${classesByLevel[block.level]}
-        ${block.id === selectedBlock ? "bg-selected/10 shadow-selected/12" : ""}`}
+      className={`relative rounded-lg ${getClassesByLevel(block.level)}`}
       onClick={(e) => {
         e.stopPropagation();
-        handleBlockClick();
-        console.log("selectedBlock", block.id);
+        setSelectedBlock(block.id);
       }}
     >
       <BlockHeader
@@ -150,6 +177,9 @@ export const DocBlock = ({
         handleTitleChange={handleTitleChange}
         toggleCollapse={toggleCollapse}
         selectedBlock={selectedBlock}
+        isReordering={isReordering}
+        selectedBlockLevel={selectedBlockLevel}
+        onReorder={onReorder}
       />
       <input
         ref={fileInputRef}
@@ -164,9 +194,8 @@ export const DocBlock = ({
             contentEditable={!readOnly}
             suppressContentEditableWarning
             onBlur={handleContentChange}
-            onClick={readOnly ? toggleCollapse : undefined}
-            className={`rounded text-foreground/85 min-h-[1.5em]
-                empty:before:content-['Escreva_aqui...'] pl-9.5 pb-0.5
+            className={`text-foreground/85 min-h-[1.5em]
+                empty:before:content-['Escreva_aqui...'] pl-9.5 pb-2 pr-3
                 empty:before:text-muted-foreground/50
                 ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
           >
@@ -180,8 +209,11 @@ export const DocBlock = ({
               onDelete={handleImageDelete}
             />
           ))}
-          {block.children.map((child) => (
-            <DocBlock
+          {block.children
+            .slice()
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+            .map((child) => (
+              <DocBlock
               key={child.id}
               block={child}
               onUpdate={handleChildUpdate}
@@ -189,6 +221,9 @@ export const DocBlock = ({
               readOnly={readOnly}
               selectedBlock={selectedBlock}
               setSelectedBlock={setSelectedBlock}
+              isReordering={isReordering}
+              selectedBlockLevel={selectedBlockLevel}
+              onReorder={onReorder}
             />
           ))}
         </div>

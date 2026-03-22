@@ -24,15 +24,16 @@ export const DocHeader = ({
       >
         {doc.title}
       </h1>
-
-      <h2
-        contentEditable={!readOnly}
-        suppressContentEditableWarning
-        onBlur={handleSubtitleChange}
-        className={`px-1 rounded mb-8 text-muted-foreground ${readOnly ? "pointer-events-none" : "cursor-text"}`}
-      >
-        {doc.subtitle || ""}
-      </h2>
+      {doc.subtitle && (
+        <h2
+          contentEditable={!readOnly}
+          suppressContentEditableWarning
+          onBlur={handleSubtitleChange}
+          className={`px-1 rounded mb-8 text-muted-foreground ${readOnly ? "pointer-events-none" : "cursor-text"}`}
+        >
+          {doc.subtitle || ""}
+        </h2>
+      )}
     </>
   );
 };

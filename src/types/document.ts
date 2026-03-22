@@ -18,6 +18,7 @@ export interface Block {
   collapsed: boolean;
   children: Block[];
   images?: BlockImage[];
+  order?: number;
 }
 
 export interface Document {

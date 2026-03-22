@@ -17,10 +17,13 @@ export const CollapseToggle: React.FC<CollapseToggleProps> = ({
 }) => {
   return (
     <Button
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
       variant="transparent"
       size="icon-sm"
-      className={`w-6 text-muted-foreground rounded-full -mt-1 
+      className={`w-6 text-muted-foreground rounded-md -mt-1 
         ${selectedBlock === blockId ? "hover:bg-selected/14" : ""}`}
       aria-label={collapsed ? "Expandir" : "Colapsar"}
     >

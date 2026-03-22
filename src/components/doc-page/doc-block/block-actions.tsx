@@ -14,6 +14,9 @@ interface BlockActionsProps {
   handleImageAdd: () => void;
   canAddChildren: boolean;
   addChildBlock: () => void;
+  isReordering: boolean;
+  setIsReordering: (val: boolean) => void;
+  onDuplicate: () => void;
 }
 
 export const BlockActions: React.FC<BlockActionsProps> = ({
@@ -23,6 +26,9 @@ export const BlockActions: React.FC<BlockActionsProps> = ({
   handleImageAdd,
   canAddChildren,
   addChildBlock,
+  isReordering,
+  setIsReordering,
+  onDuplicate,
 }) => {
   if (readOnly) return null;
 
@@ -32,11 +38,19 @@ export const BlockActions: React.FC<BlockActionsProps> = ({
         onDelete={() => onDelete(block.id)}
         block={block}
       />
-      <Button variant="transparent" size="icon">
-        <Icon Icon={ArrowUpDown} strokeWidth="light" />
+      <Button
+        variant={isReordering ? "secondary" : "transparent"}
+        size="icon"
+        onClick={() => setIsReordering(!isReordering)}
+      >
+        <Icon
+          Icon={ArrowUpDown}
+          strokeWidth="light"
+          className={isReordering ? "text-primary" : ""}
+        />
       </Button>
 
-      <Button variant="transparent" size="icon">
+      <Button variant="transparent" size="icon" onClick={onDuplicate}>
         <Icon Icon={Copy} strokeWidth="light" />
       </Button>
 

@@ -6,8 +6,7 @@ import {
   ThemeToggle,
 } from "@/components/common";
 import { BooleanSetter } from "@/types/react";
-import { Button, Switch, buttonVariants } from "@/ui";
-import { cn } from "@/lib/utils";
+import { Button, Switch } from "@/ui";
 
 export const PageHeader = ({
   readOnly,
@@ -21,7 +20,7 @@ export const PageHeader = ({
       className="py-3 sticky top-0 z-10 bg-background/80 backdrop-blur-sm 
       shadow-sm/5 mb-8"
     >
-      <div className="max-w-3xl mx-auto px-6 flex items-center justify-between">
+      <div className="max-w-3xl mx-auto px-6 max-[500px]:flex-col max-[500px]:gap-3 flex items-center justify-between">
         <Logo>
           <LogoLink className="text-h5 gap-1.5">
             <LogoIcon />
@@ -37,7 +36,7 @@ export const PageHeader = ({
             onClick={() => setReadOnly((r) => !r)}
           >
             <div>
-              Somente leitura
+              <p className="text-sm-button font-heading">Somente leitura</p>
               <Switch
                 checked={readOnly}
                 onCheckedChange={setReadOnly}

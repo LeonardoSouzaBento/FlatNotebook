@@ -183,4 +183,17 @@
   .level-3 {
     border: 1px solid hsl(var(--border));
   }
+
+  /* Editable elements */
+  [contenteditable] {
+    @apply outline-none rounded-md transition-colors duration-150 ease-in-out;
+  }
+
+  [contenteditable]:hover {
+    @apply bg-transparent;
+  }
+
+  [contenteditable]:focus {
+    @apply bg-transparent;
+  }
 }

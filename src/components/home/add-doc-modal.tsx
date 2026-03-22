@@ -17,6 +17,7 @@ interface AddDocModalProps {
   newSubtitle: string;
   setNewSubtitle: StateSetter<string>;
   onSubmit: () => void;
+  isRename?: boolean;
 }
 
 export const AddDocModal = ({
@@ -27,12 +28,22 @@ export const AddDocModal = ({
   newSubtitle,
   setNewSubtitle,
   onSubmit,
+  isRename = false,
 }: AddDocModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="font-sans">
+      <DialogContent 
+        className="font-sans"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && newTitle.trim()) {
+            onSubmit();
+          }
+        }}
+      >
         <DialogHeader>
-          <DialogTitle className="font-sans">Novo documento</DialogTitle>
+          <DialogTitle className="font-sans">
+            {isRename ? "Renomear documento" : "Novo documento"}
+          </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div>
@@ -69,10 +80,11 @@ export const AddDocModal = ({
           </Button>
           <Button
             onClick={onSubmit}
+            
             disabled={!newTitle.trim()}
             className="font-sans"
           >
-            Criar
+            {isRename ? "Renomear" : "Criar"}
           </Button>
         </DialogFooter>
       </DialogContent>

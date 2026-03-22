@@ -43,8 +43,11 @@ export const DocSummary: React.FC<SummaryProps> = ({ blocks }) => {
 
       {!collapsed && (
         <nav className="mt-2 space-y-1">
-          {blocks.map((block, index) => (
-            <Button
+          {blocks
+            .slice()
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+            .map((block, index) => (
+              <Button
               variant="transparent"
               size="sm"
               key={block.id}
