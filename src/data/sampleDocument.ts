@@ -11,45 +11,45 @@ export const sampleDocument: Document = {
       id: "cap1",
       level: 3,
       title: "Tipografia",
-      content: `Este capítulo apresenta o propósito do estudo.`,
-      collapsed: false,
-      children: [],
-    },
-    {
-      id: "cap2",
-      level: 3,
-      title: "Cores",
-      content: "Descrição geral da queda do homem.",
+      content: "",
       collapsed: false,
       children: [
         {
-          id: "sec2_1",
+          id: "sec1_1",
           level: 4,
-          title: "O pecado de Adão",
-          content: "Adão desobedeceu ao mandamento divino.",
+          title: "Nosso objetivo: variáveis CSS e escala tipográfica",
+          content:
+            "Devemos aplicar uma escala tipográfica por meio do uso de variáveis, como estas a seguir, para tamanhos de fonte adequados para as tags. A tipografia, afinal, ocupa quase metade ou a maior parte do espaço em uma aplicação, tanto que outros padrões, cores, margens e espaçamentos, por exemplo, também precisam ser aplicados na tipografia.",
           collapsed: false,
           children: [],
         },
         {
-          id: "sec2_2",
+          id: "sec1_2",
           level: 4,
-          title: "Consequências da queda",
-          content: "A queda trouxe sofrimento e morte.",
+          title: "Corpo",
+          content: `O corpo é o texto corrido. Definimos os tamanhos de fonte na tag body porque ela passa os tamanhos para todas as tags textuais, por herança.
+
+[imagem do trecho do body]`,
           collapsed: false,
           children: [
             {
-              id: "subsec2_2_1",
+              id: "subsec1_2_1",
               level: 5,
-              title: "Separação de Deus",
-              content: "A comunhão com Deus foi quebrada.",
+              title: "Tamanho exato da fonte",
+              content: `O tamanho exato da fonte varia, pois elas ocupam diferentes medidas da caixa de contenção. É à altura desta caixa que a medida font-size se refere. Podemos vê-la pelo devTools usando o texto “Good Type” pelo inspecionar elementos.
+
+[comparação das fontes próxima nova e futura]
+[texto “Good Type”  inspensionado pelo devTools]`,
               collapsed: false,
               children: [],
             },
             {
-              id: "subsec2_2_2",
+              id: "subsec1_2_2",
               level: 5,
-              title: "Corrupção da natureza humana",
-              content: "A natureza humana passou a ser inclinada ao pecado.",
+              title: "Tamanho inicial",
+              content: `[imagem do trecho do código]
+
+O tamanho inicial padrão do corpo é 16px, mas geralmente devemos ajustar para 17px. E se quisermos ter boa experiência de leitura, ajustamos para entre 18 e 21px, conforme cada fonte e propósito. Essa é a primeira preocupação de qualquer interface, o tamanho base do corpo, do texto corrido.`,
               collapsed: false,
               children: [],
             },
@@ -58,14 +58,65 @@ export const sampleDocument: Document = {
       ],
     },
     {
+      id: "cap2",
+      level: 3,
+      title: "Botões",
+      content: "Deus prometeu um Salvador.",
+      collapsed: true,
+      children: [
+        {
+          id: "sec2_1",
+          level: 4,
+          title: "A promessa em Gênesis",
+          content: "A primeira promessa messiânica aparece em Gênesis 3:15.",
+          collapsed: false,
+          children: [],
+        },
+      ],
+    },
+    {
       id: "cap3",
       level: 3,
-      title: "A Promessa de Redenção",
+      title: "Raios de borda e paddings",
       content: "Deus prometeu um Salvador.",
       collapsed: true,
       children: [
         {
           id: "sec3_1",
+          level: 4,
+          title: "A promessa em Gênesis",
+          content: "A primeira promessa messiânica aparece em Gênesis 3:15.",
+          collapsed: false,
+          children: [],
+        },
+      ],
+    },
+    {
+      id: "cap4",
+      level: 3,
+      title: "Sombras",
+      content: "Deus prometeu um Salvador.",
+      collapsed: true,
+      children: [
+        {
+          id: "sec4_1",
+          level: 4,
+          title: "A promessa em Gênesis",
+          content: "A primeira promessa messiânica aparece em Gênesis 3:15.",
+          collapsed: false,
+          children: [],
+        },
+      ],
+    },
+    {
+      id: "cap5",
+      level: 3,
+      title: "Inspiração",
+      content: "Deus prometeu um Salvador.",
+      collapsed: true,
+      children: [
+        {
+          id: "sec5_1",
           level: 4,
           title: "A promessa em Gênesis",
           content: "A primeira promessa messiânica aparece em Gênesis 3:15.",

@@ -1,20 +1,16 @@
-import { Block, BlockImage as BlockImageType } from "@/types/document";
-import React, {
-  ChangeEvent,
-  FocusEvent,
+import { useBlockHandlers } from "@/hooks/use-block-handlers";
+import { Block } from "@/types/document";
+import { StateSetter } from "@/types/react";
+import {
   useCallback,
   useRef,
-  useState,
 } from "react";
 import { BlockHeader, BlockImageItem } from "./doc-block/index";
-import { StateSetter } from "@/types/react";
-import { Separator } from "@/ui";
 // import { log } from "console";
 
 interface DocBlockProps {
   block: Block;
   onUpdate: (block: Block) => void;
-  onDelete: (blockId: string) => void;
   readOnly?: boolean;
   selectedBlock: string;
   setSelectedBlock: StateSetter<string>;
@@ -30,12 +26,9 @@ const classesByLevel = {
   6: "pt-2.25 pb-0.5",
 };
 
-// const MAX_DEPTH = 6;
-
 export const DocBlock = ({
   block,
   onUpdate,
-  onDelete,
   readOnly = false,
   selectedBlock,
   setSelectedBlock,
@@ -45,95 +38,20 @@ export const DocBlock = ({
 }: DocBlockProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const toggleCollapse = useCallback(() => {
-    onUpdate({ ...block, collapsed: !block.collapsed });
-  }, [block, onUpdate]);
-
-  const handleTitleChange = useCallback(
-    (e: FocusEvent<HTMLHeadingElement>) => {
-      const newTitle = e.currentTarget.textContent || "";
-      if (newTitle !== block.title) {
-        onUpdate({ ...block, title: newTitle });
-      }
-    },
-    [block, onUpdate],
-  );
-
-  const handleContentChange = useCallback(
-    (e: FocusEvent<HTMLElement>) => {
-      const newContent = e.currentTarget.textContent || "";
-      if (newContent !== block.content) {
-        onUpdate({ ...block, content: newContent });
-      }
-    },
-    [block, onUpdate],
-  );
-
-  const handleChildUpdate = useCallback(
-    (updatedChild: Block) => {
-      const newChildren = block.children.map((c) =>
-        c.id === updatedChild.id ? updatedChild : c,
-      );
-      onUpdate({ ...block, children: newChildren });
-    },
-    [block, onUpdate],
-  );
-
-  const handleChildDelete = useCallback(
-    (childId: string) => {
-      const newChildren = block.children.filter((c) => c.id !== childId);
-      onUpdate({ ...block, children: newChildren });
-    },
-    [block, onUpdate],
-  );
-
-  const handleImageAdd = useCallback(() => {
-    fileInputRef.current?.click();
-  }, []);
-
-  const handleFileChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const src = ev.target?.result as string;
-        const newImage: BlockImageType = {
-          id: `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-          src,
-          alt: file.name,
-          edits: {},
-        };
-        onUpdate({
-          ...block,
-          images: [...(block.images || []), newImage],
-        });
-      };
-      reader.readAsDataURL(file);
-      e.target.value = "";
-    },
-    [block, onUpdate],
-  );
-
-  const handleImageUpdate = useCallback(
-    (updatedImage: BlockImageType) => {
-      const newImages = (block.images || []).map((img) =>
-        img.id === updatedImage.id ? updatedImage : img,
-      );
-      onUpdate({ ...block, images: newImages });
-    },
-    [block, onUpdate],
-  );
-
-  const handleImageDelete = useCallback(
-    (imageId: string) => {
-      const newImages = (block.images || []).filter(
-        (img) => img.id !== imageId,
-      );
-      onUpdate({ ...block, images: newImages });
-    },
-    [block, onUpdate],
-  );
+  const {
+    toggleCollapse,
+    handleTitleChange,
+    handleContentChange,
+    handleChildUpdate,
+    handleChildDelete,
+    handleFileChange,
+    handleImageUpdate,
+    handleImageDelete,
+  } = useBlockHandlers({
+    block,
+    onUpdate,
+    fileInputRef,
+  });
 
   const hasChildSelected = useCallback(
     (b: Block): boolean => {
@@ -149,7 +67,7 @@ export const DocBlock = ({
   function getClassesByLevel(level: number) {
     const byLevel = classesByLevel[level as keyof typeof classesByLevel] || "";
     const isSelected = block.id === selectedBlock;
-    const selected = isSelected
+    const selected = isSelected && !readOnly
       ? "bg-selected/8 shadow-selected/15 [&_p]:bg-transparent [&_div[contenteditable]]:bg-transparent"
       : "";
 
@@ -217,7 +135,6 @@ export const DocBlock = ({
               key={child.id}
               block={child}
               onUpdate={handleChildUpdate}
-              onDelete={handleChildDelete}
               readOnly={readOnly}
               selectedBlock={selectedBlock}
               setSelectedBlock={setSelectedBlock}

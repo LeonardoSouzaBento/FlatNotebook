@@ -17,10 +17,7 @@ export const CollapseToggle: React.FC<CollapseToggleProps> = ({
 }) => {
   return (
     <Button
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick();
-      }}
+      onClick={onClick}
       variant="transparent"
       size="icon-sm"
       className={`w-6 text-muted-foreground rounded-md -mt-1 
