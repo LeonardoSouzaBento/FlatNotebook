@@ -43,7 +43,6 @@ export const DocBlock = ({
     handleTitleChange,
     handleContentChange,
     handleChildUpdate,
-    handleChildDelete,
     handleFileChange,
     handleImageUpdate,
     handleImageDelete,

@@ -6,7 +6,10 @@ import {
 } from "@/components/doc-page";
 import { BlockActions } from "@/components/doc-page/doc-block/index";
 import { useDocPageContext } from "@/contexts";
-import { useDocBlocks } from "@/hooks/use-doc-blocks";
+import { useDeleteBlock } from "@/hooks/use-delete-block";
+import { useDuplicateBlock } from "@/hooks/use-duplicate-block";
+import { useReorderBlock } from "@/hooks/use-reorder-block";
+import { useUpdateBlock } from "@/hooks/use-update-block";
 import { Document } from "@/types/document";
 import type { FocusEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -22,22 +25,30 @@ const DocPage = () => {
   const [isReordering, setIsReordering] = useState(false);
   const [draftDoc, setDraftDoc] = useState<Document | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const {
-    selectedBlockObj,
-    handleBlockUpdate,
-    handleBlockDelete,
-    handleReorder,
-    handleDuplicateBlock,
-    handleFileChange,
-    handleSelectedBlockAddChild,
-    canAddChildren,
-  } = useDocBlocks({
+  // deletar
+  const { handleBlockDelete } = useDeleteBlock({ setDoc });
+  // reordenar
+  const { handleReorder } = useReorderBlock({
+    selectedBlock,
+    setDoc,
+    setIsReordering,
+  });
+  // atualizar
+  const { handleBlockUpdate, handleFileChange } = useUpdateBlock({
     doc,
     setDoc,
     selectedBlock,
-    setSelectedBlock,
-    setIsReordering,
+  });
+  // duplicar
+  const {
+    selectedBlockObj,
+    handleDuplicateBlock,
+    handleSelectedBlockAddChild,
+    canAddChildren,
+  } = useDuplicateBlock({
+    doc,
+    setDoc,
+    selectedBlock,
     setDraftDoc,
     MAX_DEPTH,
   });
