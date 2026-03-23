@@ -1,14 +1,17 @@
 import { Document } from "@/types/document";
 import { StateSetter } from "@/types/react";
+import { Button, Icon } from "@/ui";
+import { Pencil } from "lucide-react";
 import { useCallback, type FocusEvent } from "react";
 
 interface Props {
   doc: Document;
   setDoc: StateSetter<Document | null>;
   readOnly: boolean;
+  onRename: () => void;
 }
 
-export const DocHeader = ({ doc, readOnly, setDoc }: Props) => {
+export const DocHeader = ({ doc, readOnly, setDoc, onRename }: Props) => {
   const handleTitleChange = useCallback(
     (e: FocusEvent<HTMLHeadingElement>) => {
       const newTitle = e.currentTarget.textContent || "";
@@ -42,23 +45,37 @@ export const DocHeader = ({ doc, readOnly, setDoc }: Props) => {
     },
     [doc, setDoc],
   );
-  
+
   return (
     <>
-      <h1
-        contentEditable={!readOnly}
-        suppressContentEditableWarning
-        onBlur={handleTitleChange}
-        className={`px-1 rounded mb-2.25 ${readOnly ? "pointer-events-none" : "cursor-text"}`}
-      >
-        {doc.title}
-      </h1>
+      <div className="relative flex justify-between gap-4">
+        <h1
+          contentEditable={!readOnly}
+          suppressContentEditableWarning
+          onBlur={handleTitleChange}
+          className={`pl-px rounded mb-2.25
+            ${readOnly ? "pointer-events-none" : "cursor-text"}
+            ${!doc.subtitle ? "mb-4" : ""}`}
+        >
+          {doc.title}
+        </h1>
+        {!readOnly && (
+          <Button
+            size="icon"
+            variant="secondary"
+            className="rounded-xl shadow-xs/12 shrink-0 mt-1"
+            onClick={onRename}
+          >
+            <Icon Icon={Pencil} size="md" />
+          </Button>
+        )}
+      </div>
       {doc.subtitle && (
         <h2
           contentEditable={!readOnly}
           suppressContentEditableWarning
           onBlur={handleSubtitleChange}
-          className={`px-1 rounded mb-8 text-muted-foreground ${readOnly ? "pointer-events-none" : "cursor-text"}`}
+          className={`pl-px rounded mb-8 text-muted-foreground ${readOnly ? "pointer-events-none" : "cursor-text"}`}
         >
           {doc.subtitle || ""}
         </h2>

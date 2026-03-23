@@ -17,14 +17,15 @@ export const PageHeader = ({
 }) => {
   return (
     <header
-      className="py-3 sticky top-0 z-10 bg-background/50 backdrop-blur-sm 
+      className="pt-2.5 pb-4 sticky top-0 z-10 bg-background/50 backdrop-blur-sm 
       shadow-sm/4 mb-8"
     >
-      <div className="max-w-3xl mx-auto px-6 max-[500px]:flex-col max-[500px]:gap-3 flex items-center justify-between">
+      <div className="max-w-3xl mx-auto px-6 max-[500px]:flex-col 
+      max-[500px]:gap-1.5 flex items-center justify-between">
         <Logo>
           <LogoLink className="text-h5 gap-1.5">
             <LogoIcon />
-            <LogoTitle className="leading-none" />
+            <LogoTitle />
           </LogoLink>
         </Logo>
         <div className="flex justify-end items-center gap-4">

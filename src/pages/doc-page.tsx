@@ -5,12 +5,13 @@ import {
   PageHeader,
 } from "@/components/doc-page";
 import { BlockActions } from "@/components/doc-page/doc-block/index";
+import { AddDocModal } from "@/components/home";
 import { useDocPageContext } from "@/contexts";
 import { useDeleteBlock } from "@/hooks/use-delete-block";
-import { useDuplicateBlock } from "@/hooks/use-duplicate-block";
+import { useAddEquivalentBlock } from "@/hooks/use-add-equivalent-block";
 import { useReorderBlock } from "@/hooks/use-reorder-block";
 import { useUpdateBlock } from "@/hooks/use-update-block";
-import { Document } from "@/types/document";
+import { Document as Doc } from "@/types/document";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAllBlockIds } from "@/hooks/utils/tree-utils";
@@ -19,13 +20,34 @@ const MAX_DEPTH = 6;
 
 const DocPage = () => {
   const { id } = useParams();
-  const { documents, doc, setDoc } = useDocPageContext();
+  const { documents } = useDocPageContext();
+  const [doc, setDoc] = useState<Doc | null>(null);
   const [readOnly, setReadOnly] = useState(false);
   const [selectedBlock, setSelectedBlock] = useState<string>("");
-  const [draftDoc, setDraftDoc] = useState<Document | null>(null);
+  const [renameModalOpen, setRenameModalOpen] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newSubtitle, setNewSubtitle] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   // deletar
   const { handleBlockDelete } = useDeleteBlock({ setDoc });
+
+  const handleOpenRename = useCallback(() => {
+    if (!doc) return;
+    setNewTitle(doc.title);
+    setNewSubtitle(doc.subtitle || "");
+    setRenameModalOpen(true);
+  }, [doc]);
+
+  const handleUpdateMetadata = useCallback(() => {
+    if (!doc || !newTitle.trim()) return;
+    setDoc({
+      ...doc,
+      title: newTitle.trim(),
+      subtitle: newSubtitle.trim() || undefined,
+      updatedAt: new Date().toISOString(),
+    });
+    setRenameModalOpen(false);
+  }, [doc, newTitle, newSubtitle, setDoc]);
 
   const onBlockDelete = useCallback(
     (blockId: string) => {
@@ -65,15 +87,14 @@ const DocPage = () => {
   // duplicar
   const {
     selectedBlockObj,
-    handleDuplicateBlock,
-    handleSelectedBlockAddChild,
+    addEquivalentBlock,
+    addChildBlock,
     canAddChildren,
-  } = useDuplicateBlock({
+  } = useAddEquivalentBlock({
     doc,
     setDoc,
     selectedBlock,
     setSelectedBlock,
-    setDraftDoc,
     MAX_DEPTH,
   });
 
@@ -91,29 +112,20 @@ const DocPage = () => {
     }
   }, [id, documents, setDoc]); // não coloque selectedBlock aqui!!!
 
-  useEffect(() => {
-    if (draftDoc) {
-      console.log("Draft Doc State:", draftDoc);
-    }
-  }, [draftDoc]);
-
   const handleSelectedBlockImageAdd = useCallback(() => {
     fileInputRef.current?.click();
   }, []);
 
   useEffect(() => {
     if (!selectedBlock) return;
-    
     // Defer execution to ensure the block is rendered
     const timer = setTimeout(() => {
       const element = document.getElementById(`block-${selectedBlock}`);
       if (element) {
         const rect = element.getBoundingClientRect();
         const footerHeight = 56; // h-14 = 56px
-        const isVisible = (
-          rect.top >= 0 &&
-          rect.bottom <= (window.innerHeight - footerHeight)
-        );
+        const isVisible =
+          rect.top >= 0 && rect.bottom <= window.innerHeight - footerHeight;
 
         if (!isVisible) {
           element.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -132,7 +144,12 @@ const DocPage = () => {
     <div>
       <PageHeader readOnly={readOnly} setReadOnly={setReadOnly} />
       <main className="max-w-3xl min-h-dvh mx-auto px-4 sm:px-6 mb-8">
-        <DocHeader doc={doc} setDoc={setDoc} readOnly={readOnly} />
+        <DocHeader
+          doc={doc}
+          setDoc={setDoc}
+          readOnly={readOnly}
+          onRename={handleOpenRename}
+        />
 
         <DocSummary blocks={doc.blocks} />
 
@@ -171,12 +188,13 @@ const DocPage = () => {
           {selectedBlockObj ? (
             <BlockActions
               block={selectedBlockObj}
+              doc={doc}
               readOnly={readOnly}
               onDelete={onBlockDelete}
               handleImageAdd={handleSelectedBlockImageAdd}
               canAddChildren={canAddChildren}
-              addChildBlock={handleSelectedBlockAddChild}
-              onDuplicate={handleDuplicateBlock}
+              addChildBlock={addChildBlock}
+              onAddEquivalentBlock={addEquivalentBlock}
               onUpdateOrder={handleUpdateOrder}
             />
           ) : (
@@ -186,6 +204,17 @@ const DocPage = () => {
           )}
         </footer>
       )}
+
+      <AddDocModal
+        open={renameModalOpen}
+        onOpenChange={setRenameModalOpen}
+        newTitle={newTitle}
+        setNewTitle={setNewTitle}
+        newSubtitle={newSubtitle}
+        setNewSubtitle={setNewSubtitle}
+        onSubmit={handleUpdateMetadata}
+        isRename={true}
+      />
     </div>
   );
 };

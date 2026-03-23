@@ -42,7 +42,7 @@ const Home = () => {
           {
             id: `block_${Date.now()}_intro`,
             level: 3,
-            title: "Intro",
+            title: "Novo capítulo",
             content: [],
             collapsed: false,
             children: [],

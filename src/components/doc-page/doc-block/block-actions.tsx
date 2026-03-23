@@ -1,6 +1,6 @@
 import { useDocPageContext } from "@/contexts";
 import { findSiblingsInfo } from "@/hooks/use-reorder-block";
-import type { Block } from "@/types/document";
+import type { Block, Document as Doc } from "@/types/document";
 import { Button, Icon } from "@/ui";
 import { ArrowUpDown, Copy } from "lucide-react";
 import React, { useState, useMemo } from "react";
@@ -13,27 +13,28 @@ import { ReorderModal } from "./reorder-modal";
 
 interface BlockActionsProps {
   block: Block;
+  doc: Doc | null;
   readOnly: boolean;
   onDelete: (blockId: string) => void;
   handleImageAdd: () => void;
   canAddChildren: boolean;
   addChildBlock: () => void;
-  onDuplicate: () => void;
+  onAddEquivalentBlock: () => void;
   onUpdateOrder: (newOrder: Block[]) => void;
 }
 
 export const BlockActions: React.FC<BlockActionsProps> = ({
   block,
+  doc,
   readOnly,
   onDelete,
   handleImageAdd,
   canAddChildren,
   addChildBlock,
-  onDuplicate,
+  onAddEquivalentBlock,
   onUpdateOrder,
 }) => {
   const [isReorderModalOpen, setIsReorderModalOpen] = useState(false);
-  const { doc } = useDocPageContext();
 
   const siblingsInfo = useMemo(() => {
     if (!doc) return null;
@@ -86,7 +87,7 @@ export const BlockActions: React.FC<BlockActionsProps> = ({
         selectedBlockId={block.id}
       />
 
-      <Button variant="transparent" size="icon" onClick={onDuplicate}>
+      <Button variant="transparent" size="icon" onClick={onAddEquivalentBlock}>
         <Icon Icon={Copy} strokeWidth="light" />
       </Button>
 

@@ -19,7 +19,7 @@ export const buttonVariants = cva(
         transparent: "bg-transparent text-primary-800 hover:bg-primary-100/70",
         link: "text-primary underline-offset-4 hover:underline",
         secondary:
-          "bg-primary-100/75 text-primary hover:bg-primary-100 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:border-none hover:bg-primary-50/75 focus:outline-3 focus:outline-selected/75 active:bg-primary-100",
+          "bg-primary-50 text-primary hover:bg-primary-100 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:border-none hover:bg-primary-50/75 focus:outline-3 focus:outline-selected/75 active:bg-primary-100",
         destructive:
           "bg-red-700 text-red-50 hover:bg-red-600 hover:bg-red-600 focus:outline-3 focus:outline-red-200 active:bg-red-800",
       },

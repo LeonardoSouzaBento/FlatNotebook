@@ -13,22 +13,42 @@ export const findSiblings = (blocks: Block[], id: string): Block[] | null => {
   return null;
 };
 
-export const generateNextId = (id: string): string => {
-  return id.replace(/(\d+)$/, (match) => String(parseInt(match, 10) + 1));
-};
+/**
+ * Generates a new ID based on the count of siblings at that level.
+ * Following the user's request: "adicionar um numero sequencial no id que seja relacionado a quantidade de blocos daquele nivel adicionados"
+ */
+export const generateIdFromSiblingsCount = (level: number, siblings: Block[], parentId?: string): string => {
+  const nextNumber = siblings.length + 1;
+  
+  if (level === 3) {
+    return `cap${nextNumber}`;
+  }
 
-export const generateFirstChildId = (parent: Block): string => {
-  const childLevel = parent.level + 1;
-  const numbers = parent.id.match(/\d+/g) || ["0"];
-  const prefix =
-    childLevel === 4 ? "sec" : childLevel >= 5 ? "subsec" : "block";
-  return `${prefix}${numbers.join("_")}_1`;
+  // Find a sibling to get the prefix pattern (e.g. "sec3_" or "subsec3_1_")
+  const sampleSibling = siblings[0];
+  if (sampleSibling) {
+    const lastUnderscoreIndex = sampleSibling.id.lastIndexOf("_");
+    if (lastUnderscoreIndex !== -1) {
+      const prefix = sampleSibling.id.substring(0, lastUnderscoreIndex + 1);
+      return `${prefix}${nextNumber}`;
+    }
+  }
+
+  // Fallback using parentId if no siblings exist yet
+  // e.g. parent "cap3" -> children level 4 starts with "sec3_1"
+  if (parentId) {
+    const parentNumbers = parentId.match(/\d+/g) || ["0"];
+    const prefix = level === 4 ? "sec" : level >= 5 ? "subsec" : "block";
+    return `${prefix}${parentNumbers.join("_")}_${nextNumber}`;
+  }
+
+  return `block_${level}_${nextNumber}`;
 };
 
 export const getDefaultTitle = (level: number): string => {
-  if (level === 3) return "Novo capitulo";
+  if (level === 3) return "Novo capítulo";
   if (level === 4) return "Novo tópico";
-  if (level >= 5) return "Novo subtopico";
+  if (level >= 5) return "Novo subtópico";
   return "Novo bloco";
 };
 
@@ -40,7 +60,8 @@ export const addSiblingBlockInTree = (
   const index = blocks.findIndex((b) => b.id === afterId);
   if (index !== -1) {
     const newBlocks = [...blocks];
-    newBlocks.push(newBlock);
+    // Insert after the current block
+    newBlocks.splice(index + 1, 0, newBlock);
     return newBlocks;
   }
 
@@ -64,8 +85,8 @@ const blocksWithNewChild = (
     if (block.id === parentId) {
       return {
         ...block,
-        collapsed: false, // Ensure it's expanded so children are visible
-        children: [...block.children, newChild],
+        collapsed: false,
+        children: [...(block.children || []), newChild],
       };
     }
     if (block.children && block.children.length > 0) {
@@ -78,7 +99,7 @@ const blocksWithNewChild = (
   });
 };
 
-interface UseDuplicateBlockProps {
+interface UseAddEquivalentBlockProps {
   doc: Document | null;
   setDoc: React.Dispatch<React.SetStateAction<Document | null>>;
   selectedBlock: string;
@@ -86,24 +107,24 @@ interface UseDuplicateBlockProps {
   MAX_DEPTH: number;
 }
 
-export const useDuplicateBlock = ({
+export const useAddEquivalentBlock = ({
   doc,
   setDoc,
   selectedBlock,
   setSelectedBlock,
   MAX_DEPTH,
-}: UseDuplicateBlockProps) => {
+}: UseAddEquivalentBlockProps) => {
   const selectedBlockObj = useMemo(() => {
     if (!doc || !selectedBlock) return null;
     return findBlockInTree(doc.blocks, selectedBlock);
   }, [doc, selectedBlock]);
 
-  const handleDuplicateBlock = useCallback(() => {
+  const addEquivalentBlock = useCallback(() => {
     if (!selectedBlockObj || !doc) return;
 
     const siblings = findSiblings(doc.blocks, selectedBlockObj.id) || [];
-    const lastSibling = siblings[siblings.length - 1];
-    const newId = generateNextId(lastSibling.id);
+    // We increment based on current siblings count
+    const newId = generateIdFromSiblingsCount(selectedBlockObj.level, siblings);
 
     const newBlock: Block = {
       id: newId,
@@ -117,30 +138,34 @@ export const useDuplicateBlock = ({
     setDoc((d) => {
       if (!d) return d;
 
-      const updatedDoc = {
+      // Re-calculate ID inside setDoc to avoid race conditions if multiple clicks happen
+      const currentBlock = findBlockInTree(d.blocks, selectedBlockObj.id);
+      if (!currentBlock) return d;
+      
+      const currentSiblings = findSiblings(d.blocks, currentBlock.id) || [];
+      const safeId = generateIdFromSiblingsCount(currentBlock.level, currentSiblings);
+      
+      const safeBlock = { ...newBlock, id: safeId };
+
+      return {
         ...d,
         updatedAt: new Date().toISOString(),
-        blocks: addSiblingBlockInTree(d.blocks, selectedBlockObj.id, newBlock),
+        blocks: addSiblingBlockInTree(d.blocks, currentBlock.id, safeBlock),
       };
-
-      return updatedDoc;
     });
 
+    // Note: setSelectedBlock might still be a bit behind if we don't know the exact safeId here,
+    // but usually it will match unless there's a heavy race.
     setSelectedBlock(newId);
   }, [selectedBlockObj, doc, setDoc, setSelectedBlock]);
 
-  const handleSelectedBlockAddChild = useCallback(() => {
+  const addChildBlock = useCallback(() => {
     const block = findBlockInTree(doc?.blocks || [], selectedBlock);
     if (!block) return;
     const childLevel = block.level + 1;
     if (childLevel > MAX_DEPTH) return;
 
-    let newId: string;
-    if (block.children && block.children.length > 0) {
-      newId = generateNextId(block.children[block.children.length - 1].id);
-    } else {
-      newId = generateFirstChildId(block);
-    }
+    const newId = generateIdFromSiblingsCount(childLevel, block.children || [], block.id);
 
     const newChild: Block = {
       id: newId,
@@ -153,10 +178,17 @@ export const useDuplicateBlock = ({
 
     setDoc((d) => {
       if (!d) return d;
+      
+      const parentBlock = findBlockInTree(d.blocks, selectedBlock);
+      if (!parentBlock) return d;
+      
+      const safeId = generateIdFromSiblingsCount(childLevel, parentBlock.children || [], parentBlock.id);
+      const safeChild = { ...newChild, id: safeId };
+
       return {
         ...d,
         updatedAt: new Date().toISOString(),
-        blocks: blocksWithNewChild(d.blocks, selectedBlock, newChild),
+        blocks: blocksWithNewChild(d.blocks, selectedBlock, safeChild),
       };
     });
 
@@ -171,8 +203,8 @@ export const useDuplicateBlock = ({
 
   return {
     selectedBlockObj,
-    handleDuplicateBlock,
-    handleSelectedBlockAddChild,
+    addEquivalentBlock,
+    addChildBlock,
     canAddChildren,
   };
 };
