@@ -9,11 +9,11 @@ import {
 
 export const PageHeader = () => {
   return (
-    <header className="shadow-sm/7">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+    <header className="shadow-sm/4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-3 pb-4.5 flex items-center justify-between">
         <div>
           <Logo>
-            <LogoLink className="text-h2 mb-1 gap-2">
+            <LogoLink className="text-h2 gap-2">
               <LogoIcon />
               <LogoTitle className="text-h6" />
             </LogoLink>

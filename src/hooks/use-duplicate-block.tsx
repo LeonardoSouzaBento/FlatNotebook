@@ -64,6 +64,7 @@ const blocksWithNewChild = (
     if (block.id === parentId) {
       return {
         ...block,
+        collapsed: false, // Ensure it's expanded so children are visible
         children: [...block.children, newChild],
       };
     }
@@ -81,6 +82,7 @@ interface UseDuplicateBlockProps {
   doc: Document | null;
   setDoc: React.Dispatch<React.SetStateAction<Document | null>>;
   selectedBlock: string;
+  setSelectedBlock: (id: string) => void;
   setDraftDoc: React.Dispatch<React.SetStateAction<Document | null>>;
   MAX_DEPTH: number;
 }
@@ -89,6 +91,7 @@ export const useDuplicateBlock = ({
   doc,
   setDoc,
   selectedBlock,
+  setSelectedBlock,
   setDraftDoc,
   MAX_DEPTH,
 }: UseDuplicateBlockProps) => {
@@ -108,29 +111,25 @@ export const useDuplicateBlock = ({
       id: newId,
       level: selectedBlockObj.level,
       title: getDefaultTitle(selectedBlockObj.level),
-      content: "",
+      content: [],
       collapsed: false,
       children: [],
     };
 
-    setDraftDoc((d) => {
-      const targetDoc = d || doc;
-      if (!targetDoc) return null;
+    setDoc((d) => {
+      if (!d) return d;
 
       const updatedDoc = {
-        ...targetDoc,
+        ...d,
         updatedAt: new Date().toISOString(),
-        blocks: addSiblingBlockInTree(
-          targetDoc.blocks,
-          selectedBlockObj.id,
-          newBlock,
-        ),
+        blocks: addSiblingBlockInTree(d.blocks, selectedBlockObj.id, newBlock),
       };
 
-      console.log("Draft Doc Update (Duplication):", updatedDoc);
       return updatedDoc;
     });
-  }, [selectedBlockObj, doc, setDraftDoc]);
+
+    setSelectedBlock(newId);
+  }, [selectedBlockObj, doc, setDoc, setSelectedBlock]);
 
   const handleSelectedBlockAddChild = useCallback(() => {
     const block = findBlockInTree(doc?.blocks || [], selectedBlock);
@@ -149,7 +148,7 @@ export const useDuplicateBlock = ({
       id: newId,
       level: childLevel,
       title: getDefaultTitle(childLevel),
-      content: "",
+      content: [],
       collapsed: false,
       children: [],
     };
@@ -162,7 +161,9 @@ export const useDuplicateBlock = ({
         blocks: blocksWithNewChild(d.blocks, selectedBlock, newChild),
       };
     });
-  }, [doc, selectedBlock, setDoc, MAX_DEPTH]);
+
+    setSelectedBlock(newId);
+  }, [doc, selectedBlock, setDoc, setSelectedBlock, MAX_DEPTH]);
 
   const canAddChildren = useMemo(() => {
     const block = findBlockInTree(doc?.blocks || [], selectedBlock);

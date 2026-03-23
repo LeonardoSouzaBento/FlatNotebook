@@ -11,9 +11,9 @@ import { useDuplicateBlock } from "@/hooks/use-duplicate-block";
 import { useReorderBlock } from "@/hooks/use-reorder-block";
 import { useUpdateBlock } from "@/hooks/use-update-block";
 import { Document } from "@/types/document";
-import type { FocusEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { getAllBlockIds } from "@/hooks/utils/tree-utils";
 
 const MAX_DEPTH = 6;
 
@@ -22,16 +22,39 @@ const DocPage = () => {
   const { documents, doc, setDoc } = useDocPageContext();
   const [readOnly, setReadOnly] = useState(false);
   const [selectedBlock, setSelectedBlock] = useState<string>("");
-  const [isReordering, setIsReordering] = useState(false);
   const [draftDoc, setDraftDoc] = useState<Document | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   // deletar
   const { handleBlockDelete } = useDeleteBlock({ setDoc });
+
+  const onBlockDelete = useCallback(
+    (blockId: string) => {
+      if (!doc) return;
+
+      const allIds = getAllBlockIds(doc.blocks);
+      const index = allIds.indexOf(blockId);
+
+      let nextSelectedId = "";
+      if (index !== -1) {
+        if (index < allIds.length - 1) {
+          nextSelectedId = allIds[index + 1];
+        } else if (index > 0) {
+          nextSelectedId = allIds[index - 1];
+        }
+      }
+
+      handleBlockDelete(blockId);
+      if (nextSelectedId) {
+        setSelectedBlock(nextSelectedId);
+      }
+    },
+    [doc, handleBlockDelete, setSelectedBlock],
+  );
+
   // reordenar
-  const { handleReorder } = useReorderBlock({
+  const { handleUpdateOrder } = useReorderBlock({
     selectedBlock,
     setDoc,
-    setIsReordering,
   });
   // atualizar
   const { handleBlockUpdate, handleFileChange } = useUpdateBlock({
@@ -49,6 +72,7 @@ const DocPage = () => {
     doc,
     setDoc,
     selectedBlock,
+    setSelectedBlock,
     setDraftDoc,
     MAX_DEPTH,
   });
@@ -65,7 +89,7 @@ const DocPage = () => {
     } else {
       setDoc(null);
     }
-  }, [id, documents, setDoc]);
+  }, [id, documents, setDoc]); // não coloque selectedBlock aqui!!!
 
   useEffect(() => {
     if (draftDoc) {
@@ -73,58 +97,42 @@ const DocPage = () => {
     }
   }, [draftDoc]);
 
-  const handleTitleChange = useCallback(
-    (e: FocusEvent<HTMLHeadingElement>) => {
-      const newTitle = e.currentTarget.textContent || "";
-      if (doc && newTitle !== doc.title) {
-        setDoc((d) => {
-          if (!d) return d;
-          return {
-            ...d,
-            title: newTitle,
-            updatedAt: new Date().toISOString(),
-          };
-        });
-      }
-    },
-    [doc, setDoc],
-  );
-
-  const handleSubtitleChange = useCallback(
-    (e: FocusEvent<HTMLHeadingElement>) => {
-      const newSub = e.currentTarget.textContent || "";
-      if (doc && newSub !== doc.subtitle) {
-        setDoc((d) => {
-          if (!d) return d;
-          return {
-            ...d,
-            subtitle: newSub,
-            updatedAt: new Date().toISOString(),
-          };
-        });
-      }
-    },
-    [doc, setDoc],
-  );
-
   const handleSelectedBlockImageAdd = useCallback(() => {
     fileInputRef.current?.click();
   }, []);
+
+  useEffect(() => {
+    if (!selectedBlock) return;
+    
+    // Defer execution to ensure the block is rendered
+    const timer = setTimeout(() => {
+      const element = document.getElementById(`block-${selectedBlock}`);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        const footerHeight = 56; // h-14 = 56px
+        const isVisible = (
+          rect.top >= 0 &&
+          rect.bottom <= (window.innerHeight - footerHeight)
+        );
+
+        if (!isVisible) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [selectedBlock]);
 
   if (!id || !doc) {
     return null; // Or a loading spinner
   }
 
   return (
-    <div className="bg-background">
+    <div>
       <PageHeader readOnly={readOnly} setReadOnly={setReadOnly} />
       <main className="max-w-3xl min-h-dvh mx-auto px-4 sm:px-6 mb-8">
-        <DocHeader
-          doc={doc}
-          readOnly={readOnly}
-          handleTitleChange={handleTitleChange}
-          handleSubtitleChange={handleSubtitleChange}
-        />
+        <DocHeader doc={doc} setDoc={setDoc} readOnly={readOnly} />
 
         <DocSummary blocks={doc.blocks} />
 
@@ -141,9 +149,6 @@ const DocPage = () => {
                   readOnly={readOnly}
                   selectedBlock={selectedBlock}
                   setSelectedBlock={setSelectedBlock}
-                  isReordering={isReordering}
-                  selectedBlockLevel={selectedBlockObj?.level}
-                  onReorder={handleReorder}
                 />
               );
             })}
@@ -160,20 +165,19 @@ const DocPage = () => {
 
       {!readOnly && (
         <footer
-          className="w-full h-14 bg-light-bg/75 backdrop-blur-xs px-4
-        border-t border-border/50 sticky bottom-0 left-0 z-50 shadow-sm"
+          className="w-full h-14 bg-medium-bg/80 backdrop-blur-xs px-4
+        border-t border-border/50 sticky bottom-0 left-0 z-50 shadow-sm/1"
         >
           {selectedBlockObj ? (
             <BlockActions
               block={selectedBlockObj}
               readOnly={readOnly}
-              onDelete={handleBlockDelete}
+              onDelete={onBlockDelete}
               handleImageAdd={handleSelectedBlockImageAdd}
               canAddChildren={canAddChildren}
               addChildBlock={handleSelectedBlockAddChild}
-              isReordering={isReordering}
-              setIsReordering={setIsReordering}
               onDuplicate={handleDuplicateBlock}
+              onUpdateOrder={handleUpdateOrder}
             />
           ) : (
             <span className="text-sm size-full pb-px flex items-center justify-center">

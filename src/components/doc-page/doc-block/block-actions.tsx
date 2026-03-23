@@ -1,11 +1,15 @@
+import { useDocPageContext } from "@/contexts";
+import { findSiblingsInfo } from "@/hooks/use-reorder-block";
 import type { Block } from "@/types/document";
 import { Button, Icon } from "@/ui";
 import { ArrowUpDown, Copy } from "lucide-react";
+import React, { useState, useMemo } from "react";
 import {
   AddChildBlockBtn,
   AddImageButton,
   DeleteButtonWithModal,
 } from "./block-header/index";
+import { ReorderModal } from "./reorder-modal";
 
 interface BlockActionsProps {
   block: Block;
@@ -14,9 +18,8 @@ interface BlockActionsProps {
   handleImageAdd: () => void;
   canAddChildren: boolean;
   addChildBlock: () => void;
-  isReordering: boolean;
-  setIsReordering: (val: boolean) => void;
   onDuplicate: () => void;
+  onUpdateOrder: (newOrder: Block[]) => void;
 }
 
 export const BlockActions: React.FC<BlockActionsProps> = ({
@@ -26,10 +29,33 @@ export const BlockActions: React.FC<BlockActionsProps> = ({
   handleImageAdd,
   canAddChildren,
   addChildBlock,
-  isReordering,
-  setIsReordering,
   onDuplicate,
+  onUpdateOrder,
 }) => {
+  const [isReorderModalOpen, setIsReorderModalOpen] = useState(false);
+  const { doc } = useDocPageContext();
+
+  const siblingsInfo = useMemo(() => {
+    if (!doc) return null;
+    return findSiblingsInfo(doc.blocks, block.id);
+  }, [doc, block.id]);
+
+  const siblings = useMemo(() => {
+    return siblingsInfo?.siblings || [];
+  }, [siblingsInfo]);
+  
+  const isRedundantPair = useMemo(() => {
+    if (siblings.length !== 2) return false;
+    const [a, b] = siblings;
+    return (
+      a.title === b.title &&
+      a.content.length === 0 &&
+      b.content.length === 0
+    );
+  }, [siblings]);
+
+  const isReorderDisabled = siblings.length <= 1 || isRedundantPair;
+
   if (readOnly) return null;
 
   return (
@@ -38,17 +64,27 @@ export const BlockActions: React.FC<BlockActionsProps> = ({
         onDelete={() => onDelete(block.id)}
         block={block}
       />
+      
       <Button
-        variant={isReordering ? "secondary" : "transparent"}
+        variant="transparent"
         size="icon"
-        onClick={() => setIsReordering(!isReordering)}
+        onClick={() => !isReorderDisabled && setIsReorderModalOpen(true)}
+        className={isReorderDisabled ? "grayscale opacity-50 cursor-not-allowed" : ""}
+        disabled={isReorderDisabled}
       >
         <Icon
           Icon={ArrowUpDown}
           strokeWidth="light"
-          className={isReordering ? "text-primary" : ""}
         />
       </Button>
+
+      <ReorderModal
+        open={isReorderModalOpen}
+        onOpenChange={setIsReorderModalOpen}
+        siblings={siblings}
+        onReorder={onUpdateOrder}
+        selectedBlockId={block.id}
+      />
 
       <Button variant="transparent" size="icon" onClick={onDuplicate}>
         <Icon Icon={Copy} strokeWidth="light" />

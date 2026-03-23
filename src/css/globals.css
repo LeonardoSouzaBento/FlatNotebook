@@ -40,9 +40,9 @@
   --color-border: hsl(0 7.14% 87%);
   --color-input-border: hsl(0 10.86% 71.3%);
   --color-input: hsl(0 5.43% 97.7%);
-  --color-light-bg: hsl(0, 0%, 100%);
-  --color-medium-bg: hsl(0, 0%, 97%);
-  --color-dark-bg: hsl(0, 0%, 96%);
+  --color-light-bg: hsl(36, 33%, 99%);
+  --color-medium-bg: hsl(36, 33%, 97%);
+  --color-dark-bg: hsl(36, 12%, 95%);
   --color-primary-50: #faf2ed;
   --color-primary-100: hsl(27, 57%, 91%);
   --color-primary-200: #e9cdb7;
@@ -64,7 +64,7 @@
   --color-destructive-800: #991b1b;
   --color-selected: hsl(230, 100%, 82%);
 
-  --color-background: hsl(40 33% 97%);
+  --color-background: #faf8f5;
   --color-card: hsl(40 25% 95%);
   --color-card-foreground: hsl(30 10% 15%);
   --color-popover: hsl(40 33% 97%);
@@ -159,7 +159,7 @@
   body {
     overscroll-behavior-x: none;
     @apply min-h-screen text-foreground
-    bg-linear-to-br from-light-bg via-medium-bg to-dark-bg;
+    bg-background;
   }
   html,
   body {

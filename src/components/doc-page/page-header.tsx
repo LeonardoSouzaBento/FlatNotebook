@@ -17,8 +17,8 @@ export const PageHeader = ({
 }) => {
   return (
     <header
-      className="py-3 sticky top-0 z-10 bg-background/80 backdrop-blur-sm 
-      shadow-sm/5 mb-8"
+      className="py-3 sticky top-0 z-10 bg-background/50 backdrop-blur-sm 
+      shadow-sm/4 mb-8"
     >
       <div className="max-w-3xl mx-auto px-6 max-[500px]:flex-col max-[500px]:gap-3 flex items-center justify-between">
         <Logo>

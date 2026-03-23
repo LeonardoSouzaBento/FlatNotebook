@@ -27,9 +27,11 @@ export const useBlockHandlers = ({
   );
 
   const handleContentChange = useCallback(
-    (e: FocusEvent<HTMLElement>) => {
-      const newContent = e.currentTarget.textContent || "";
-      if (newContent !== block.content) {
+    (index: number, e: FocusEvent<HTMLElement>) => {
+      const newText = e.currentTarget.textContent || "";
+      const newContent = [...block.content];
+      if (newText !== newContent[index]) {
+        newContent[index] = newText;
         onUpdate({ ...block, content: newContent });
       }
     },

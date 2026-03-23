@@ -43,7 +43,7 @@ const Home = () => {
             id: `block_${Date.now()}_intro`,
             level: 3,
             title: "Intro",
-            content: "",
+            content: [],
             collapsed: false,
             children: [],
           },

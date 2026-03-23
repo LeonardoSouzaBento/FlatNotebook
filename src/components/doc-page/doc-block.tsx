@@ -14,14 +14,11 @@ interface DocBlockProps {
   readOnly?: boolean;
   selectedBlock: string;
   setSelectedBlock: StateSetter<string>;
-  isReordering?: boolean;
-  selectedBlockLevel?: number;
-  onReorder?: (targetId: string) => void;
 }
 
 const classesByLevel = {
   3: "pt-2 pb-1.25 mb-4 last:mb-0",
-  4: "pt-2 pb-0.5 rounded-md",
+  4: "pt-2.5 pb-0.5 rounded-md",
   5: "pt-2.5 pb-0.75 mb-0 last:mb-0",
   6: "pt-2.25 pb-0.5",
 };
@@ -32,9 +29,6 @@ export const DocBlock = ({
   readOnly = false,
   selectedBlock,
   setSelectedBlock,
-  isReordering,
-  selectedBlockLevel,
-  onReorder,
 }: DocBlockProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -67,7 +61,7 @@ export const DocBlock = ({
     const byLevel = classesByLevel[level as keyof typeof classesByLevel] || "";
     const isSelected = block.id === selectedBlock;
     const selected = isSelected && !readOnly
-      ? "bg-selected/8 shadow-selected/15 [&_p]:bg-transparent [&_div[contenteditable]]:bg-transparent"
+      ? "bg-selected/12 shadow-selected/15 [&_p]:bg-transparent [&_div[contenteditable]]:bg-transparent"
       : "";
 
     const childIsSelected = level === 3 && hasChildSelected(block);
@@ -82,7 +76,7 @@ export const DocBlock = ({
   return (
     <div
       id={`block-${block.id}`}
-      className={`relative rounded-lg ${getClassesByLevel(block.level)}`}
+      className={`relative rounded-xl ${getClassesByLevel(block.level)}`}
       onClick={(e) => {
         e.stopPropagation();
         setSelectedBlock(block.id);
@@ -94,9 +88,6 @@ export const DocBlock = ({
         handleTitleChange={handleTitleChange}
         toggleCollapse={toggleCollapse}
         selectedBlock={selectedBlock}
-        isReordering={isReordering}
-        selectedBlockLevel={selectedBlockLevel}
-        onReorder={onReorder}
       />
       <input
         ref={fileInputRef}
@@ -107,17 +98,37 @@ export const DocBlock = ({
       />
       {!block.collapsed && (
         <div>
-          <p
-            contentEditable={!readOnly}
-            suppressContentEditableWarning
-            onBlur={handleContentChange}
-            className={`text-foreground/85 min-h-[1.5em]
-                empty:before:content-['Escreva_aqui...'] pl-9.5 pb-2 pr-3
-                empty:before:text-muted-foreground/50
-                ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
-          >
-            {block.content}
-          </p>
+          {block.content.length === 0 ? (
+            <p
+              contentEditable={!readOnly}
+              suppressContentEditableWarning
+              onBlur={(e) => {
+                const newText = e.currentTarget.textContent || "";
+                if (newText) {
+                  onUpdate({ ...block, content: [newText] });
+                }
+              }}
+              className={`text-foreground/85 min-h-[1.5em]
+                  empty:before:content-['Escreva_aqui...'] pl-9.5 pb-3.25 pr-4
+                  empty:before:text-muted-foreground/50
+                  ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
+            />
+          ) : (
+            block.content.map((text, index) => (
+              <p
+                key={index}
+                contentEditable={!readOnly}
+                suppressContentEditableWarning
+                onBlur={(e) => handleContentChange(index, e)}
+                className={`text-foreground/85 min-h-[1.5em]
+                    empty:before:content-['Escreva_aqui...'] pl-9.5 pb-3.25 pr-4
+                    empty:before:text-muted-foreground/50
+                    ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
+              >
+                {text}
+              </p>
+            ))
+          )}
           {(block.images || []).map((image) => (
             <BlockImageItem
               key={image.id}
@@ -137,9 +148,6 @@ export const DocBlock = ({
               readOnly={readOnly}
               selectedBlock={selectedBlock}
               setSelectedBlock={setSelectedBlock}
-              isReordering={isReordering}
-              selectedBlockLevel={selectedBlockLevel}
-              onReorder={onReorder}
             />
           ))}
         </div>

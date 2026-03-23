@@ -25,8 +25,12 @@ const renderBlockPreview = (block: Block) => (
     <div className={`font-sans font-semibold h${block.level}`}>
       {block.title}
     </div>
-    {block.content && (
-      <p className="text-sm text-muted-foreground">{block.content}</p>
+    {block.content.length > 0 && (
+      <div className="text-sm text-muted-foreground">
+        {block.content.map((text, idx) => (
+          <p key={idx}>{text}</p>
+        ))}
+      </div>
     )}
     {block.children.length > 0 && (
       <div className="ml-4 mt-1">
@@ -40,6 +44,34 @@ export const DeleteButtonWithModal: React.FC<DeleteButtonWithModalProps> = ({
   onDelete,
   block,
 }) => {
+  const isEmptyBlock =
+    block.content.length === 0 &&
+    (!block.images || block.images.length === 0) &&
+    block.children.length === 0;
+
+  const handleDelete = () => {
+    onDelete();
+  };
+
+  if (isEmptyBlock) {
+    return (
+      <Button
+        variant="transparent"
+        size="icon"
+        aria-label="Remover bloco"
+        onClick={handleDelete}
+      >
+        <Icon
+          Icon={Trash}
+          strokeWidth="light"
+          color="var(--color-destructive)"
+          fill="var(--color-destructive-icon)"
+          size="sm"
+        />
+      </Button>
+    );
+  }
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -65,7 +97,7 @@ export const DeleteButtonWithModal: React.FC<DeleteButtonWithModalProps> = ({
         </ScrollArea>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={onDelete} variant="destructive">
+          <AlertDialogAction onClick={handleDelete} variant="destructive">
             Excluir
           </AlertDialogAction>
         </AlertDialogFooter>

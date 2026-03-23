@@ -23,7 +23,7 @@ export const DocSummary: React.FC<SummaryProps> = ({ blocks }) => {
         onClick={() => setCollapsed(!collapsed)}
         className="flex items-center gap-1.25 w-full text-left"
       >
-        <Button variant="transparent" size="icon-sm" asChild>
+        <Button variant="transparent" size="icon-xs" asChild data-rounded className="mb-px ml-px">
           <div>
             <Icon
               Icon={ChevronRight}

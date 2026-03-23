@@ -1,25 +1,47 @@
 import { useCallback } from "react";
 import { Block, Document } from "@/types/document";
 
-export const reorderBlocksInTree = (
+/**
+ * Recursively find the siblings and parent id of a block in the tree.
+ * Siblings can be top-level blocks or children of an existing block.
+ * returns { parentId: string | null, siblings: Block[] }
+ */
+export const findSiblingsInfo = (
   blocks: Block[],
-  sourceId: string,
   targetId: string,
+  parentId: string | null = null,
+): { parentId: string | null; siblings: Block[] } | null => {
+  const isAtThisLevel = blocks.some((b) => b.id === targetId);
+  if (isAtThisLevel) {
+    return { parentId, siblings: blocks };
+  }
+
+  for (const block of blocks) {
+    if (block.children && block.children.length > 0) {
+      const found = findSiblingsInfo(block.children, targetId, block.id);
+      if (found) return found;
+    }
+  }
+
+  return null;
+};
+
+/**
+ * Recursively updates a list of blocks at a specific level (siblings of targetId)
+ * with the new ordered version.
+ */
+export const updateBlocksOrderInTree = (
+  blocks: Block[],
+  targetId: string,
+  newOrderedSiblings: Block[],
 ): Block[] => {
   // Check if they are in the current list
-  const sourceIdx = blocks.findIndex((b) => b.id === sourceId);
-  const targetIdx = blocks.findIndex((b) => b.id === targetId);
+  const isAtThisLevel = blocks.some((b) => b.id === targetId);
 
-  if (sourceIdx !== -1 && targetIdx !== -1) {
-    const newBlocks = [...blocks];
-    // Swap positions
-    [newBlocks[sourceIdx], newBlocks[targetIdx]] = [
-      newBlocks[targetIdx],
-      newBlocks[sourceIdx],
-    ];
-
-    // Assign order values based on new indices to persist the change
-    return newBlocks.map((block, index) => ({
+  if (isAtThisLevel) {
+    // Current blocks should be replaced by newOrderedSiblings,
+    // and updated with their new order indices
+    return newOrderedSiblings.map((block, index) => ({
       ...block,
       order: index,
     }));
@@ -30,7 +52,11 @@ export const reorderBlocksInTree = (
     if (block.children && block.children.length > 0) {
       return {
         ...block,
-        children: reorderBlocksInTree(block.children, sourceId, targetId),
+        children: updateBlocksOrderInTree(
+          block.children,
+          targetId,
+          newOrderedSiblings,
+        ),
       };
     }
     return block;
@@ -40,29 +66,30 @@ export const reorderBlocksInTree = (
 interface UseReorderBlockProps {
   selectedBlock: string;
   setDoc: React.Dispatch<React.SetStateAction<Document | null>>;
-  setIsReordering: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const useReorderBlock = ({
   selectedBlock,
   setDoc,
-  setIsReordering,
 }: UseReorderBlockProps) => {
-  const handleReorder = useCallback(
-    (targetId: string) => {
+  const handleUpdateOrder = useCallback(
+    (newOrderedSiblings: Block[]) => {
       if (!selectedBlock) return;
       setDoc((d) => {
         if (!d) return d;
-        setIsReordering(false);
         return {
           ...d,
           updatedAt: new Date().toISOString(),
-          blocks: reorderBlocksInTree(d.blocks, selectedBlock, targetId),
+          blocks: updateBlocksOrderInTree(
+            d.blocks,
+            selectedBlock,
+            newOrderedSiblings,
+          ),
         };
       });
     },
-    [selectedBlock, setDoc, setIsReordering],
+    [selectedBlock, setDoc],
   );
 
-  return { handleReorder };
+  return { handleUpdateOrder };
 };

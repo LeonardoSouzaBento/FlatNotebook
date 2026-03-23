@@ -14,7 +14,7 @@ export interface Block {
   id: string;
   level: number;
   title: string;
-  content: string;
+  content: string[];
   collapsed: boolean;
   children: Block[];
   images?: BlockImage[];

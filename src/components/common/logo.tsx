@@ -10,7 +10,7 @@ interface LogoWrapperProps extends ComponentProps<"div"> {
 }
 const Logo = ({ children, className, ...props }: LogoWrapperProps) => {
   return (
-    <div className={cn(`flex flex-col max-w-max`, className)} {...props}>
+    <div className={cn(`flex flex-col gap-1 max-w-max`, className)} {...props}>
       {children}
     </div>
   );
@@ -74,7 +74,7 @@ const LogoTitle = ({ className, ...props }: ComponentProps<"h1">) => {
 const LogoDescription = ({ className, ...props }: ComponentProps<"p">) => {
   return (
     <p
-      className={cn("text-muted-foreground font-normal", className)}
+      className={cn("text-muted-foreground font-normal leading-none", className)}
       {...props}
     />
   );

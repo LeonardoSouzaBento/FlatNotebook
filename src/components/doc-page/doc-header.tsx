@@ -1,19 +1,48 @@
 import { Document } from "@/types/document";
-import type { FocusEvent } from "react";
+import { StateSetter } from "@/types/react";
+import { useCallback, type FocusEvent } from "react";
 
 interface Props {
   doc: Document;
+  setDoc: StateSetter<Document | null>;
   readOnly: boolean;
-  handleTitleChange: (e: FocusEvent<HTMLHeadingElement>) => void;
-  handleSubtitleChange: (e: FocusEvent<HTMLHeadingElement>) => void;
 }
 
-export const DocHeader = ({
-  doc,
-  readOnly,
-  handleTitleChange,
-  handleSubtitleChange,
-}: Props) => {
+export const DocHeader = ({ doc, readOnly, setDoc }: Props) => {
+  const handleTitleChange = useCallback(
+    (e: FocusEvent<HTMLHeadingElement>) => {
+      const newTitle = e.currentTarget.textContent || "";
+      if (doc && newTitle !== doc.title) {
+        setDoc((d) => {
+          if (!d) return d;
+          return {
+            ...d,
+            title: newTitle,
+            updatedAt: new Date().toISOString(),
+          };
+        });
+      }
+    },
+    [doc, setDoc],
+  );
+
+  const handleSubtitleChange = useCallback(
+    (e: FocusEvent<HTMLHeadingElement>) => {
+      const newSub = e.currentTarget.textContent || "";
+      if (doc && newSub !== doc.subtitle) {
+        setDoc((d) => {
+          if (!d) return d;
+          return {
+            ...d,
+            subtitle: newSub,
+            updatedAt: new Date().toISOString(),
+          };
+        });
+      }
+    },
+    [doc, setDoc],
+  );
+  
   return (
     <>
       <h1

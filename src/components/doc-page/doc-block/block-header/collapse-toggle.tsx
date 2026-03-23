@@ -16,21 +16,23 @@ export const CollapseToggle: React.FC<CollapseToggleProps> = ({
   blockId,
 }) => {
   return (
-    <Button
-      onClick={onClick}
-      variant="transparent"
-      size="icon-sm"
-      className={`w-6 text-muted-foreground rounded-md -mt-1 
-        ${selectedBlock === blockId ? "hover:bg-selected/14" : ""}`}
-      aria-label={collapsed ? "Expandir" : "Colapsar"}
-    >
-      <Icon
-        Icon={ChevronRight}
-        className={`transition-transform duration-200 ml-px ${
-          collapsed ? "" : "rotate-90"
-        }`}
-        size="sm"
-      />
-    </Button>
+    <div className="size-8 -mb-px flex items-center 
+          justify-start cursor-pointer shrink-0" onClick={onClick}>
+      <Button
+        variant="transparent"
+        size="icon-xs"
+        className={`text-muted-foreground rounded-full flex-none
+          ${selectedBlock === blockId ? "hover:bg-selected/14" : ""}`}
+        aria-label={collapsed ? "Expandir" : "Colapsar"}
+      >
+        <Icon
+          Icon={ChevronRight}
+          className={`transition-transform duration-200 ml-px mt-px ${
+            collapsed ? "" : "rotate-90"
+          }`}
+          size="sm"
+        />
+      </Button>
+    </div>
   );
 };
