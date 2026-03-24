@@ -42,7 +42,7 @@ export const ThemeToggle = () => {
 
   return (
     <Button
-      data-rounded
+      data-round
       variant="ghost"
       size="icon-sm"
       onClick={toggle}

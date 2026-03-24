@@ -61,7 +61,7 @@ export const DocBlock = ({
     const byLevel = classesByLevel[level as keyof typeof classesByLevel] || "";
     const isSelected = block.id === selectedBlock;
     const selected = isSelected && !readOnly
-      ? "bg-selected/12 shadow-selected/15 [&_p]:bg-transparent [&_div[contenteditable]]:bg-transparent"
+      ? "bg-selected/12 dark:bg-selected/24 shadow-selected/15 [&_p]:bg-transparent [&_div[contenteditable]]:bg-transparent"
       : "";
 
     const childIsSelected = level === 3 && hasChildSelected(block);

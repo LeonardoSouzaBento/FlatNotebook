@@ -121,27 +121,22 @@ O tamanho inicial padrão do corpo é 16px, mas geralmente devemos ajustar para 
       title: "Inspiração",
       content: ["Deus prometeu um Salvador."],
       collapsed: true,
-      children: [
-        {
-          id: "sec5_1",
-          level: 4,
-          title: "A promessa em Gênesis",
-          content: ["A primeira promessa messiânica aparece em Gênesis 3:15."],
-          collapsed: false,
-          children: [],
-        },
-      ],
+      children: [],
     },
   ],
 };
 
 /*
-      images: [
-        {
-          id: "img_001",
-          src: exampleFallImage,
-          alt: "A Queda do Homem - Adão e Eva no Jardim do Éden",
-          edits: {},
-        },
-      ],
+content: [
+  "Texto normal",
+  "**texto negrito**",
+  "*texto itálico*",
+  "__texto sublinhado__",
+  "!img[id_da_imagem]",
+  "[link](https://google.com)",
+  "[big] texto [/big]",
+  "[small] texto [/small]",
+  "[code] texto [/code]",
+  "[quote] texto [/quote]",
+]
 */

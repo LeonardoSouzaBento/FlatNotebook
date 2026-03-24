@@ -23,7 +23,13 @@ export const DocSummary: React.FC<SummaryProps> = ({ blocks }) => {
         onClick={() => setCollapsed(!collapsed)}
         className="flex items-center gap-1.25 w-full text-left"
       >
-        <Button variant="transparent" size="icon-xs" asChild data-rounded className="mb-px ml-px">
+        <Button
+          variant="transparent"
+          size="icon-xs"
+          asChild
+          data-round
+          className="mb-px ml-px"
+        >
           <div>
             <Icon
               Icon={ChevronRight}
@@ -48,16 +54,16 @@ export const DocSummary: React.FC<SummaryProps> = ({ blocks }) => {
             .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
             .map((block, index) => (
               <Button
-              variant="transparent"
-              size="sm"
-              key={block.id}
-              onClick={() => handleClick(block.id)}
-              className="block w-full text-left px-3 hover:bg-primary-50 transition-colors"
-            >
-              <span className="mr-2 font-[350]">{index + 1}</span>
-              {block.title}
-            </Button>
-          ))}
+                variant="transparent"
+                size="sm"
+                key={block.id}
+                onClick={() => handleClick(block.id)}
+                className="block w-full text-left px-3 hover:bg-primary-50 transition-colors"
+              >
+                <span className="mr-2 font-[350]">{index + 1}</span>
+                {block.title}
+              </Button>
+            ))}
         </nav>
       )}
     </div>

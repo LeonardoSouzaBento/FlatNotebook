@@ -2,7 +2,7 @@
 
 @layer components {
   body {
-    @apply font-normal font-body text-[16.8px] leading-[1.65] tracking-[-0.01em];
+    @apply font-normal font-body text-[1.0625rem] leading-[1.65] tracking-[-0.01em];
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 export type ButtonVariants = VariantProps<typeof buttonVariants>;
 
 export const buttonVariants = cva(
-  "w-auto tracking-wide inline-flex items-center justify-center gap-2 font-medium rounded-md ring-offset-background transition-colors disabled:pointer-events-none disabled:cursor-not-allowed cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0 relative data-w-full:w-full data-rounded:rounded-full focus:outline-none data-option:rounded-full data-black:text-foreground data-option:text-sm data-option:px-[0.64em] leading-none",
+  "w-auto tracking-wide inline-flex items-center justify-center gap-2 font-medium rounded-md ring-offset-background transition-colors disabled:pointer-events-none disabled:cursor-not-allowed cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0 relative data-w-full:w-full data-round:rounded-full focus:outline-none data-option:rounded-full data-black:text-foreground data-option:text-sm data-option:px-[0.64em] leading-none",
   {
     variants: {
       variant: {
@@ -43,26 +43,26 @@ export const buttonVariants = cva(
 
 const paddings = {
   default: {
-    sm: "px-[0.93em] py-[0.63885rem]",
-    default: "px-[0.93em] py-[0.73438rem]",
-    lg: "px-[0.93em] py-[0.82813rem]",
+    sm: "px-[0.85em] py-[0.65270rem]",
+    default: "px-[0.85em] py-[0.74893rem]",
+    lg: "px-[0.85em] py-[0.84375rem]",
   },
   outline: {
-    sm: "px-[0.82716em] py-[0.54794rem]",
-    default: "px-[0.83304em] py-[0.64347rem]",
-    lg: "px-[0.83857em] py-[0.73722rem]",
+    sm: "px-[0.75413em] py-[0.56179rem]",
+    default: "px-[0.75019em] py-[0.65803rem]",
+    lg: "px-[0.75588em] py-[0.75284rem]",
   },
   ghost: {
-    sm: "px-[0.82841em] py-[0.6076rem]",
-    default: "px-[0.83429em] py-[0.70313rem]",
-    lg: "px-[0.83982em] py-[0.79688rem]",
+    sm: "px-[0.79707em] py-[0.60724rem]",
+    default: "px-[0.8001em] py-[0.70348rem]",
+    lg: "px-[0.80294em] py-[0.79830rem]",
   },
 };
 
 type OmitVariant = keyof typeof paddings | "destructive" | "secondary";
 type OmitSize = keyof typeof paddings.default;
 const paddingExptions = {
-  variants: ["link", "transparent"],
+  variants: ["link"],
   sizes: ["icon", "icon-sm", "icon-md", "icon-lg"],
 };
 

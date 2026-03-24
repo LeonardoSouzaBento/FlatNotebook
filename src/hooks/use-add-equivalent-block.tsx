@@ -105,6 +105,7 @@ interface UseAddEquivalentBlockProps {
   selectedBlock: string;
   setSelectedBlock: (id: string) => void;
   MAX_DEPTH: number;
+  setScrollToView: (scroll: boolean) => void;
 }
 
 export const useAddEquivalentBlock = ({
@@ -113,6 +114,7 @@ export const useAddEquivalentBlock = ({
   selectedBlock,
   setSelectedBlock,
   MAX_DEPTH,
+  setScrollToView,
 }: UseAddEquivalentBlockProps) => {
   const selectedBlockObj = useMemo(() => {
     if (!doc || !selectedBlock) return null;
@@ -157,7 +159,10 @@ export const useAddEquivalentBlock = ({
     // Note: setSelectedBlock might still be a bit behind if we don't know the exact safeId here,
     // but usually it will match unless there's a heavy race.
     setSelectedBlock(newId);
-  }, [selectedBlockObj, doc, setDoc, setSelectedBlock]);
+    if (selectedBlockObj.level === 3) {
+      setScrollToView(true);
+    }
+  }, [selectedBlockObj, doc, setDoc, setSelectedBlock, setScrollToView]);
 
   const addChildBlock = useCallback(() => {
     const block = findBlockInTree(doc?.blocks || [], selectedBlock);
@@ -193,7 +198,8 @@ export const useAddEquivalentBlock = ({
     });
 
     setSelectedBlock(newId);
-  }, [doc, selectedBlock, setDoc, setSelectedBlock, MAX_DEPTH]);
+    setScrollToView(true);
+  }, [doc, selectedBlock, setDoc, setSelectedBlock, MAX_DEPTH, setScrollToView]);
 
   const canAddChildren = useMemo(() => {
     const block = findBlockInTree(doc?.blocks || [], selectedBlock);

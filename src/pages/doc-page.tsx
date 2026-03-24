@@ -28,8 +28,10 @@ const DocPage = () => {
   const [newTitle, setNewTitle] = useState("");
   const [newSubtitle, setNewSubtitle] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // const [images, setImages] = useState<ImageEdit[]>([]);
   // deletar
   const { handleBlockDelete } = useDeleteBlock({ setDoc });
+  const [scrollToView, setScrollToView] = useState(false);
 
   const handleOpenRename = useCallback(() => {
     if (!doc) return;
@@ -96,6 +98,7 @@ const DocPage = () => {
     selectedBlock,
     setSelectedBlock,
     MAX_DEPTH,
+    setScrollToView,
   });
 
   useEffect(() => {
@@ -116,8 +119,9 @@ const DocPage = () => {
     fileInputRef.current?.click();
   }, []);
 
+  // rolar para o bloco selecionado
   useEffect(() => {
-    if (!selectedBlock) return;
+    if (!selectedBlock || !scrollToView) return;
     // Defer execution to ensure the block is rendered
     const timer = setTimeout(() => {
       const element = document.getElementById(`block-${selectedBlock}`);
@@ -131,10 +135,11 @@ const DocPage = () => {
           element.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       }
+      setScrollToView(false);
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [selectedBlock]);
+  }, [selectedBlock, scrollToView]);
 
   if (!id || !doc) {
     return null; // Or a loading spinner

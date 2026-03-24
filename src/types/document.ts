@@ -1,5 +1,8 @@
 export interface ImageEdit {
-  crop?: { x: number; y: number; width: number; height: number };
+  id: string;
+  url: string;
+  alt?: string;
+  crop?: { x: number; y: number };
   resize?: { width: number; height: number };
 }
 

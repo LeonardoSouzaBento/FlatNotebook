@@ -32,7 +32,7 @@ export const AddDocModal = ({
 }: AddDocModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent 
+      <DialogContent
         className="font-sans"
         onKeyDown={(e) => {
           if (e.key === "Enter" && newTitle.trim()) {
@@ -41,49 +41,42 @@ export const AddDocModal = ({
         }}
       >
         <DialogHeader>
-          <DialogTitle className="font-sans">
+          <DialogTitle>
             {isRename ? "Renomear documento" : "Novo documento"}
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div>
-            <label className="text-sm font-medium text-foreground font-sans block mb-1.5">
+            <label className="text-sm font-medium text-foreground block mb-1.5">
               Título *
             </label>
             <Input
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
               placeholder="Nome do documento"
-              className="font-sans"
               autoFocus
             />
           </div>
           <div>
-            <label className="text-sm font-medium text-foreground font-sans block mb-1.5">
+            <label className="text-sm font-medium text-foreground block mb-1.5">
               Subtítulo
             </label>
             <Input
               value={newSubtitle}
               onChange={(e) => setNewSubtitle(e.target.value)}
               placeholder="Subtítulo (opcional)"
-              className="font-sans"
             />
           </div>
         </div>
         <DialogFooter>
           <Button
-            variant="outline"
+            data-round
+            variant="transparent"
             onClick={() => onOpenChange(false)}
-            className="font-sans"
           >
             Cancelar
           </Button>
-          <Button
-            onClick={onSubmit}
-            
-            disabled={!newTitle.trim()}
-            className="font-sans"
-          >
+          <Button data-round onClick={onSubmit} disabled={!newTitle.trim()}>
             {isRename ? "Renomear" : "Criar"}
           </Button>
         </DialogFooter>
