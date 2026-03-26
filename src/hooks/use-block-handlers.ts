@@ -1,5 +1,6 @@
 import { useCallback, ChangeEvent, FocusEvent } from "react";
 import { Block, BlockImage as BlockImageType } from "@/types/document";
+import { parseHtmlToFormat } from "@/utils/format-text";
 
 interface UseBlockHandlersProps {
   block: Block;
@@ -28,7 +29,8 @@ export const useBlockHandlers = ({
 
   const handleContentChange = useCallback(
     (index: number, e: FocusEvent<HTMLElement>) => {
-      const newText = e.currentTarget.textContent || "";
+      const newHtml = e.currentTarget.innerHTML || "";
+      const newText = parseHtmlToFormat(newHtml);
       const newContent = [...block.content];
       if (newText !== newContent[index]) {
         newContent[index] = newText;
@@ -71,7 +73,7 @@ export const useBlockHandlers = ({
           id: `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
           src,
           alt: file.name,
-          edits: {},
+          edits: { resize: { widthPx: 220 } },
         };
         onUpdate({
           ...block,

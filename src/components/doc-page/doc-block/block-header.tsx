@@ -18,7 +18,7 @@ export const BlockHeader: React.FC<BlockHeaderProps> = ({
   selectedBlock,
 }) => {
   return (
-    <div className="flex items-center mb-ex-offset pl-1.5 pr-3">
+    <div className="flex items-center mb-2.5 pl-1.5 pr-3">
       <CollapseToggle
         onClick={toggleCollapse}
         collapsed={block.collapsed}
@@ -31,6 +31,7 @@ export const BlockHeader: React.FC<BlockHeaderProps> = ({
         onBlur={handleTitleChange}
         level={block.level}
         title={block.title}
+        toggleCollapse={toggleCollapse}
       />
     </div>
   );

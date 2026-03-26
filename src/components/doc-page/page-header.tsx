@@ -33,7 +33,7 @@ export const PageHeader = ({
             asChild
             size="sm"
             variant="ghost"
-            className="rounded-full pr-1"
+            className="rounded-full pr-1.5"
             onClick={() => setReadOnly((r) => !r)}
           >
             <div>

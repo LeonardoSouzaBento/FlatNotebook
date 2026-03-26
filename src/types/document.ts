@@ -1,9 +1,6 @@
 export interface ImageEdit {
-  id: string;
-  url: string;
-  alt?: string;
-  crop?: { x: number; y: number };
-  resize?: { width: number; height: number };
+  crop?: { x: number; y: number; width: number; height: number };
+  resize?: { widthPx: number };
 }
 
 export interface BlockImage {

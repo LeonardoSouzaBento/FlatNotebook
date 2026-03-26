@@ -57,7 +57,7 @@ const useUpdateBlock = ({
           id: `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
           src,
           alt: file.name,
-          edits: {},
+          edits: { resize: { widthPx: 220 } },
         };
         handleBlockUpdate({
           ...block,

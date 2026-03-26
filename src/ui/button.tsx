@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 export type ButtonVariants = VariantProps<typeof buttonVariants>;
 
 export const buttonVariants = cva(
-  "w-auto tracking-wide inline-flex items-center justify-center gap-2 font-medium rounded-md ring-offset-background transition-colors disabled:pointer-events-none disabled:cursor-not-allowed cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0 relative data-w-full:w-full data-round:rounded-full focus:outline-none data-option:rounded-full data-black:text-foreground data-option:text-sm data-option:px-[0.64em] leading-none",
+  "w-auto tracking-wide inline-flex items-center justify-center gap-[0.6em] font-medium rounded-md ring-offset-background transition-colors disabled:pointer-events-none disabled:cursor-not-allowed cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0 relative data-w-full:w-full data-round:rounded-full focus:outline-none data-option:rounded-full data-black:text-foreground data-option:text-sm data-option:px-[0.64em] leading-none",
   {
     variants: {
       variant: {
@@ -21,12 +21,12 @@ export const buttonVariants = cva(
         secondary:
           "bg-primary-50 text-primary hover:bg-primary-100 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:border-none hover:bg-primary-50/75 focus:outline-3 focus:outline-selected/75 active:bg-primary-100",
         destructive:
-          "bg-red-700 text-red-50 hover:bg-red-600 hover:bg-red-600 focus:outline-3 focus:outline-red-200 active:bg-red-800",
+          "bg-destructive-700 text-destructive-50 hover:bg-destructive-600 focus:outline-3 focus:outline-destructive-200 active:bg-destructive-800",
       },
       size: {
-        sm: "h-9 text-sm-button",
+        sm: "h-9 small-btn",
         default: `h-10`,
-        lg: "h-11 text-lg-button",
+        lg: "h-11 large-btn",
         "icon-xs": "size-7 min-h-7",
         "icon-sm": "size-8",
         icon: "size-9",

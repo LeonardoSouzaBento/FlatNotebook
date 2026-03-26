@@ -1,17 +1,12 @@
 import { BlockImage } from "@/types/document";
-import { Button } from "@/ui/button";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/ui/dialog";
-import { Input } from "@/ui/input";
-import { Label } from "@/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover";
-import { Crop, Maximize2, MoreVertical, Trash2 } from "lucide-react";
-import React, { useState } from "react";
+  CloseButton,
+  CropButtons,
+  CropUIOverlay,
+  PopoverMenu,
+  ResizeButton,
+} from "./block-image/index";
 
 interface BlockImageItemProps {
   image: BlockImage;
@@ -19,244 +14,317 @@ interface BlockImageItemProps {
   onDelete: (imageId: string) => void;
 }
 
+type Mode = "view" | "resize" | "crop";
+
+const LANDSCAPE_RATIOS = [
+  { label: "16:9", value: 16 / 9 },
+  { label: "3:2", value: 3 / 2 },
+  { label: "4:3", value: 4 / 3 },
+  { label: "1:1", value: 1 },
+  { label: "Livre", value: 0 },
+];
+
+const PORTRAIT_RATIOS = [
+  { label: "9:16", value: 9 / 16 },
+  { label: "2:3", value: 2 / 3 },
+  { label: "3:4", value: 3 / 4 },
+  { label: "1:1", value: 1 },
+  { label: "Livre", value: 0 },
+];
+
 export const BlockImageItem: React.FC<BlockImageItemProps> = ({
   image,
   onUpdate,
   onDelete,
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [cropOpen, setCropOpen] = useState(false);
-  const [resizeOpen, setResizeOpen] = useState(false);
+  const [mode, setMode] = useState<Mode>("view");
+  const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const [cropValues, setCropValues] = useState({
-    x: image.edits.crop?.x ?? 0,
-    y: image.edits.crop?.y ?? 0,
-    width: image.edits.crop?.width ?? 100,
-    height: image.edits.crop?.height ?? 100,
-  });
+  // Live editing state (preview during drag, committed on mouseup)
+  const [liveWidthPx, setLiveWidthPx] = useState<number | null>(null);
+  const [liveCrop, setLiveCrop] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
 
-  const [resizeValues, setResizeValues] = useState({
-    width: image.edits.resize?.width ?? 100,
-    height: image.edits.resize?.height ?? 100,
-  });
+  const widthPx = liveWidthPx ?? image.edits.resize?.widthPx ?? 220;
+  const crop = useMemo(
+    () => liveCrop ?? image.edits.crop ?? { x: 0, y: 0, width: 100, height: 100 },
+    [liveCrop, image.edits.crop]
+  );
+  const hasCropInfo = !!image.edits.crop;
+  const isLandscape = naturalSize.width >= naturalSize.height;
 
-  const applyCrop = () => {
-    onUpdate({
-      ...image,
-      edits: { ...image.edits, crop: { ...cropValues } },
-    });
-    setCropOpen(false);
+  const handleImageLoad = useCallback(
+    (e: React.SyntheticEvent<HTMLImageElement>) => {
+      const img = e.currentTarget;
+      setNaturalSize({ width: img.naturalWidth, height: img.naturalHeight });
+    },
+    [],
+  );
+
+  /* ─── wrapper + img styles ─── */
+
+  const getWrapperStyle = (): React.CSSProperties => {
+    const style: React.CSSProperties = {
+      width: `${widthPx}px`,
+      maxWidth: "100%",
+      position: "relative",
+      overflow: mode === "crop" ? "hidden" : "hidden",
+      borderRadius: "0.375rem",
+      border:
+        mode !== "view"
+          ? "2px solid var(--primary)"
+          : "1px solid var(--border)",
+    };
+
+    if (naturalSize.width > 0) {
+      if (mode === "crop") {
+        // Show the full physical image proportions during crop
+        style.aspectRatio = `${naturalSize.width} / ${naturalSize.height}`;
+      } else if (hasCropInfo) {
+        // Show cropped proportions
+        const cropW = (crop.width / 100) * naturalSize.width;
+        const cropH = (crop.height / 100) * naturalSize.height;
+        style.aspectRatio = `${cropW} / ${cropH}`;
+      }
+    }
+    return style;
   };
 
-  const applyResize = () => {
-    onUpdate({
-      ...image,
-      edits: { ...image.edits, resize: { ...resizeValues } },
-    });
-    setResizeOpen(false);
+  const getImageStyle = (): React.CSSProperties => {
+    // In crop mode, the image fills the wrapper completely (showing its full uncropped self)
+    if (mode === "crop" || !hasCropInfo) {
+      return {
+        width: "100%",
+        height: "100%",
+        display: "block",
+        objectFit: "contain",
+      };
+    }
+    // In view or resize mode with crop, scale image so the cropped area fills the wrapper
+    return {
+      position: "absolute",
+      width: `${(100 / crop.width) * 100}%`,
+      height: `${(100 / crop.height) * 100}%`,
+      left: `${-(crop.x / crop.width) * 100}%`,
+      top: `${-(crop.y / crop.height) * 100}%`,
+      maxWidth: "none",
+    };
   };
 
-  const displayStyle: React.CSSProperties = {};
-  if (image.edits.resize) {
-    displayStyle.width = `${image.edits.resize.width}%`;
-  }
-  if (image.edits.crop) {
-    const c = image.edits.crop;
-    displayStyle.objectPosition = `${c.x}% ${c.y}%`;
-    displayStyle.objectFit = "cover";
-  }
+  /* ─── RESIZE drag ─── */
+
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const startW = widthPx;
+      const wrapper = wrapperRef.current;
+      const parent = wrapper?.parentElement;
+      if (!parent || !wrapper) return;
+
+      const parentW = parent.clientWidth;
+      const rect = wrapper.getBoundingClientRect();
+      const aspectRatio = rect.width / rect.height;
+
+      const onMove = (ev: MouseEvent) => {
+        const dx = ev.clientX - startX;
+        const dy = ev.clientY - startY;
+
+        const deltaFromY = dy * aspectRatio;
+        const delta = Math.abs(dx) > Math.abs(deltaFromY) ? dx : deltaFromY;
+
+        // Ensure within bounds (min 50px, max parent width)
+        setLiveWidthPx(Math.max(50, Math.min(parentW, startW + delta)));
+      };
+
+      const onUp = () => {
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+        setLiveWidthPx((cur) => {
+          const final = Math.round(cur ?? startW);
+          onUpdate({
+            ...image,
+            edits: { ...image.edits, resize: { widthPx: final } },
+          });
+          return null;
+        });
+      };
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+    },
+    [widthPx, image, onUpdate],
+  );
+
+  /* ─── CROP drag ─── */
+
+  const handleCropStart = useCallback(
+    (direction: "x" | "y" | "xy") => (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const startCrop = crop;
+      const wrapper = wrapperRef.current;
+      if (!wrapper || naturalSize.width === 0) return;
+
+      const rect = wrapper.getBoundingClientRect();
+
+      const onMove = (ev: MouseEvent) => {
+        const dx = ev.clientX - startX;
+        const dy = ev.clientY - startY;
+
+        const nc = { ...startCrop };
+
+        if (direction === "x" || direction === "xy") {
+          const dW = (dx / rect.width) * 100;
+          nc.width = Math.max(5, Math.min(100 - nc.x, startCrop.width + dW));
+        }
+
+        if (direction === "y" || direction === "xy") {
+          const dH = (dy / rect.height) * 100;
+          nc.height = Math.max(5, Math.min(100 - nc.y, startCrop.height + dH));
+        }
+
+        setLiveCrop(nc);
+      };
+
+      const onUp = () => {
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+        // During crop mode drag, we just update local state.
+        // It only gets saved when clicking "Recortar".
+      };
+
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+    },
+    [crop, naturalSize],
+  );
+
+  /* ─── aspect-ratio presets ─── */
+
+  const applyAspectRatio = useCallback(
+    (ratio: number) => {
+      if (naturalSize.width === 0) return;
+      if (ratio === 0) {
+        setLiveCrop({ x: 0, y: 0, width: 100, height: 100 });
+        return;
+      }
+
+      const cur = crop;
+      let newH = (cur.width * naturalSize.width) / (ratio * naturalSize.height);
+      let newW = cur.width;
+
+      if (cur.y + newH > 100) {
+        newH = 100 - cur.y;
+        newW = (newH * ratio * naturalSize.height) / naturalSize.width;
+      }
+
+      setLiveCrop({ x: cur.x, y: cur.y, width: newW, height: newH });
+    },
+    [crop, naturalSize],
+  );
+
+  const commitCrop = () => {
+    onUpdate({
+      ...image,
+      edits: {
+        ...image.edits,
+        crop: crop,
+      },
+    });
+    setMode("view");
+    setLiveCrop(null);
+  };
+
+  const cancelCrop = () => {
+    setMode("view");
+    setLiveCrop(null);
+  };
+
+  const ratios = isLandscape ? LANDSCAPE_RATIOS : PORTRAIT_RATIOS;
+
+  /* ─── Handle classes ─── */
+  const handleBase =
+    "absolute z-30 flex items-center justify-center bg-primary shadow-md hover:scale-110 active:scale-95 transition-transform";
 
   return (
-    <>
-      <div className="relative group my-2 inline-block">
+    <div
+      className="my-2 pl-9.5 pr-4 flex flex-col items-start gap-2"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* ── Crop: aspect-ratio bar ── */}
+      {mode === "crop" && (
+        <div className="flex items-center gap-1.5 p-1 rounded-md bg-muted/50 border border-border">
+          {ratios.map((r) => (
+            <button
+              key={r.label}
+              onClick={() => applyAspectRatio(r.value)}
+              className="text-[11px] px-2.5 py-1 rounded bg-background hover:bg-muted-foreground/10 text-foreground transition-colors font-medium border border-border/50 shadow-sm"
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div
+        ref={wrapperRef}
+        className="relative group inline-block"
+        style={getWrapperStyle()}
+      >
         <img
           src={image.src}
           alt={image.alt || ""}
-          className="rounded-md border border-border max-w-full"
-          style={displayStyle}
+          onLoad={handleImageLoad}
+          style={getImageStyle()}
+          draggable={false}
+          className="select-none pointer-events-none"
         />
 
-        {/* 3-dot menu */}
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Popover open={menuOpen} onOpenChange={setMenuOpen}>
-            <PopoverTrigger asChild>
-              <button className="w-8 h-8 flex items-center justify-center rounded-md bg-background/80 backdrop-blur-sm border border-border shadow-sm hover:bg-muted transition-colors">
-                <MoreVertical className="w-4 h-4 text-foreground" />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent
-              className="w-auto p-1 flex gap-1"
-              side="left"
-              align="start"
-            >
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  setCropOpen(true);
-                }}
-                className="w-8 h-8 flex items-center justify-center rounded hover:bg-muted transition-colors"
-                aria-label="Cortar imagem"
-              >
-                <Crop className="w-4 h-4 text-foreground" />
-              </button>
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  setResizeOpen(true);
-                }}
-                className="w-8 h-8 flex items-center justify-center rounded hover:bg-muted transition-colors"
-                aria-label="Redimensionar imagem"
-              >
-                <Maximize2 className="w-4 h-4 text-foreground" />
-              </button>
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  onDelete(image.id);
-                }}
-                className="w-8 h-8 flex items-center justify-center rounded hover:bg-destructive/10 transition-colors"
-                aria-label="Remover imagem"
-              >
-                <Trash2 className="w-4 h-4 text-destructive" />
-              </button>
-            </PopoverContent>
-          </Popover>
-        </div>
+        {/* ── View: popover menu ── */}
+        {mode === "view" && (
+          <PopoverMenu
+            menuOpen={menuOpen}
+            setMenuOpen={setMenuOpen}
+            setMode={setMode}
+            onDelete={() => onDelete(image.id)}
+          />
+        )}
 
-        {/* Edit badges */}
-        {(image.edits.crop || image.edits.resize) && (
-          <div className="absolute bottom-2 left-2 flex gap-1">
-            {image.edits.crop && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-background/80 backdrop-blur-sm border border-border text-muted-foreground">
-                Cortada
-              </span>
-            )}
-            {image.edits.resize && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-background/80 backdrop-blur-sm border border-border text-muted-foreground">
-                {image.edits.resize.width}%
-              </span>
-            )}
-          </div>
+        {/* ── Close button (resize mode) ── */}
+        {mode === "resize" && <CloseButton setMode={setMode} />}
+
+        {/* ── Resize handle (bottom-right) ── */}
+        {mode === "resize" && (
+          <ResizeButton
+            onMouseDown={handleResizeStart}
+            handleBase={handleBase}
+          />
+        )}
+
+        {/* ── Crop UI Overlay ── */}
+        {mode === "crop" && (
+          <CropUIOverlay
+            crop={crop}
+            handleCropStart={handleCropStart}
+            handleBase={handleBase}
+          />
         )}
       </div>
 
-      {/* Crop Dialog */}
-      <Dialog open={cropOpen} onOpenChange={setCropOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Cortar imagem</DialogTitle>
-          </DialogHeader>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>X (%)</Label>
-              <Input
-                type="number"
-                min={0}
-                max={100}
-                value={cropValues.x}
-                onChange={(e) =>
-                  setCropValues((v) => ({ ...v, x: Number(e.target.value) }))
-                }
-              />
-            </div>
-            <div>
-              <Label>Y (%)</Label>
-              <Input
-                type="number"
-                min={0}
-                max={100}
-                value={cropValues.y}
-                onChange={(e) =>
-                  setCropValues((v) => ({ ...v, y: Number(e.target.value) }))
-                }
-              />
-            </div>
-            <div>
-              <Label>Largura (%)</Label>
-              <Input
-                type="number"
-                min={1}
-                max={100}
-                value={cropValues.width}
-                onChange={(e) =>
-                  setCropValues((v) => ({
-                    ...v,
-                    width: Number(e.target.value),
-                  }))
-                }
-              />
-            </div>
-            <div>
-              <Label>Altura (%)</Label>
-              <Input
-                type="number"
-                min={1}
-                max={100}
-                value={cropValues.height}
-                onChange={(e) =>
-                  setCropValues((v) => ({
-                    ...v,
-                    height: Number(e.target.value),
-                  }))
-                }
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setCropOpen(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={applyCrop}>Aplicar</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Resize Dialog */}
-      <Dialog open={resizeOpen} onOpenChange={setResizeOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Redimensionar imagem</DialogTitle>
-          </DialogHeader>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Largura (%)</Label>
-              <Input
-                type="number"
-                min={10}
-                max={200}
-                value={resizeValues.width}
-                onChange={(e) =>
-                  setResizeValues((v) => ({
-                    ...v,
-                    width: Number(e.target.value),
-                  }))
-                }
-              />
-            </div>
-            <div>
-              <Label>Altura (%)</Label>
-              <Input
-                type="number"
-                min={10}
-                max={200}
-                value={resizeValues.height}
-                onChange={(e) =>
-                  setResizeValues((v) => ({
-                    ...v,
-                    height: Number(e.target.value),
-                  }))
-                }
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setResizeOpen(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={applyResize}>Aplicar</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+      {/* ── Crop Buttons (Below Image) ── */}
+      {mode === "crop" && (
+        <CropButtons commitCrop={commitCrop} cancelCrop={cancelCrop} />
+      )}
+    </div>
   );
 };

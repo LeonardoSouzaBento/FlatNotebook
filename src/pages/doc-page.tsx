@@ -3,18 +3,22 @@ import {
   DocHeader,
   DocSummary,
   PageHeader,
+  FormatToolbar,
 } from "@/components/doc-page";
 import { BlockActions } from "@/components/doc-page/doc-block/index";
 import { AddDocModal } from "@/components/home";
 import { useDocPageContext } from "@/contexts";
-import { useDeleteBlock } from "@/hooks/use-delete-block";
-import { useAddEquivalentBlock } from "@/hooks/use-add-equivalent-block";
-import { useReorderBlock } from "@/hooks/use-reorder-block";
-import { useUpdateBlock } from "@/hooks/use-update-block";
+import {
+  useDeleteBlock,
+  useAddEquivalentBlock,
+  useReorderBlock,
+  useUpdateBlock,
+} from "@/hooks";
 import { Document as Doc } from "@/types/document";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAllBlockIds } from "@/hooks/utils/tree-utils";
+import NotFound from "./not-found";
 
 const MAX_DEPTH = 6;
 
@@ -142,7 +146,7 @@ const DocPage = () => {
   }, [selectedBlock, scrollToView]);
 
   if (!id || !doc) {
-    return null; // Or a loading spinner
+    return <NotFound />;
   }
 
   return (
@@ -220,6 +224,7 @@ const DocPage = () => {
         onSubmit={handleUpdateMetadata}
         isRename={true}
       />
+      <FormatToolbar />
     </div>
   );
 };

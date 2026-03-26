@@ -29,9 +29,8 @@ export const sampleDocument: Document = {
           level: 4,
           title: "Corpo",
           content: [
-            `O corpo é o texto corrido. Definimos os tamanhos de fonte na tag body porque ela passa os tamanhos para todas as tags textuais, por herança.
-
-[imagem do trecho do body]`,
+            `O corpo é o texto corrido. Definimos os tamanhos de fonte na tag body porque ela passa os tamanhos para todas as tags textuais, por herança.`,
+            `[imagem do trecho do body]`,
           ],
           collapsed: false,
           children: [
@@ -40,10 +39,9 @@ export const sampleDocument: Document = {
               level: 5,
               title: "Tamanho exato da fonte",
               content: [
-                `O tamanho exato da fonte varia, pois elas ocupam diferentes medidas da caixa de contenção. É à altura desta caixa que a medida font-size se refere. Podemos vê-la pelo devTools usando o texto “Good Type” pelo inspecionar elementos.
-
-[comparação das fontes próxima nova e futura]
-[texto “Good Type”  inspensionado pelo devTools]`,
+                `O tamanho exato da fonte varia, pois elas ocupam diferentes medidas da caixa de contenção. É à altura desta caixa que a medida font-size se refere. Podemos vê-la pelo devTools usando o texto “Good Type” pelo inspecionar elementos.`,
+                `[comparação das fontes próxima nova e futura]`,
+                `[texto “Good Type”  inspensionado pelo devTools]`,
               ],
               collapsed: false,
               children: [],
@@ -53,9 +51,8 @@ export const sampleDocument: Document = {
               level: 5,
               title: "Tamanho inicial",
               content: [
-                `[imagem do trecho do código]
-
-O tamanho inicial padrão do corpo é 16px, mas geralmente devemos ajustar para 17px. E se quisermos ter boa experiência de leitura, ajustamos para entre 18 e 21px, conforme cada fonte e propósito. Essa é a primeira preocupação de qualquer interface, o tamanho base do corpo, do texto corrido.`,
+                `[imagem do trecho do código]`,
+                `O tamanho inicial padrão do corpo é 16px, mas geralmente devemos ajustar para 17px. E se quisermos ter boa experiência de leitura, ajustamos para entre 18 e 21px, conforme cada fonte e propósito. Essa é a primeira preocupação de qualquer interface, o tamanho base do corpo, do texto corrido.`,
               ],
               collapsed: false,
               children: [],
@@ -68,58 +65,31 @@ O tamanho inicial padrão do corpo é 16px, mas geralmente devemos ajustar para 
       id: "cap2",
       level: 3,
       title: "Botões",
-      content: ["Deus prometeu um Salvador."],
+      content: [],
       collapsed: true,
-      children: [
-        {
-          id: "sec2_1",
-          level: 4,
-          title: "A promessa em Gênesis",
-          content: ["A primeira promessa messiânica aparece em Gênesis 3:15."],
-          collapsed: false,
-          children: [],
-        },
-      ],
+      children: [],
     },
     {
       id: "cap3",
       level: 3,
       title: "Raios de borda e preenchimentos",
-      content: ["Deus prometeu um Salvador."],
+      content: [],
       collapsed: true,
-      children: [
-        {
-          id: "sec3_1",
-          level: 4,
-          title: "A promessa em Gênesis",
-          content: ["A primeira promessa messiânica aparece em Gênesis 3:15."],
-          collapsed: false,
-          children: [],
-        },
-      ],
+      children: [],
     },
     {
       id: "cap4",
       level: 3,
       title: "Sombras",
-      content: ["Deus prometeu um Salvador."],
+      content: [],
       collapsed: true,
-      children: [
-        {
-          id: "sec4_1",
-          level: 4,
-          title: "A promessa em Gênesis",
-          content: ["A primeira promessa messiânica aparece em Gênesis 3:15."],
-          collapsed: false,
-          children: [],
-        },
-      ],
+      children: [],
     },
     {
       id: "cap5",
       level: 3,
       title: "Inspiração",
-      content: ["Deus prometeu um Salvador."],
+      content: [],
       collapsed: true,
       children: [],
     },

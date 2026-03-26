@@ -1,11 +1,10 @@
 import { useBlockHandlers } from "@/hooks/use-block-handlers";
 import { Block } from "@/types/document";
 import { StateSetter } from "@/types/react";
-import {
-  useCallback,
-  useRef,
-} from "react";
+import { useCallback, useRef } from "react";
 import { BlockHeader, BlockImageItem } from "./doc-block/index";
+import { cva } from "class-variance-authority";
+import { formatText, parseHtmlToFormat } from "@/utils/format-text";
 // import { log } from "console";
 
 interface DocBlockProps {
@@ -22,6 +21,21 @@ const classesByLevel = {
   5: "pt-2.5 pb-0.75 mb-0 last:mb-0",
   6: "pt-2.25 pb-0.5",
 };
+
+const paragraph = cva(
+  "text-foreground/85 min-h-[1.5em] \
+   empty:before:content-['Escreva_aqui...'] \
+   first:pt-[0.16875rem] pl-9.5 pb-3.25 pr-4 \
+   empty:before:text-muted-foreground/50",
+  {
+    variants: {
+      readOnly: {
+        true: "cursor-pointer select-none",
+        false: "cursor-text",
+      },
+    },
+  },
+);
 
 export const DocBlock = ({
   block,
@@ -60,9 +74,12 @@ export const DocBlock = ({
   function getClassesByLevel(level: number) {
     const byLevel = classesByLevel[level as keyof typeof classesByLevel] || "";
     const isSelected = block.id === selectedBlock;
-    const selected = isSelected && !readOnly
-      ? "bg-selected/12 dark:bg-selected/24 shadow-selected/15 [&_p]:bg-transparent [&_div[contenteditable]]:bg-transparent"
-      : "";
+    const selected =
+      isSelected && !readOnly
+        ? `bg-selected/9 dark:bg-selected/24 shadow-selected/15 
+        [&_p]:bg-transparent [&_div[contenteditable]]:bg-transparent`
+        : "";
+    const parentReadOnly = readOnly && level === 3 ? "border border/50" : "";
 
     const childIsSelected = level === 3 && hasChildSelected(block);
     const opacity =
@@ -70,13 +87,13 @@ export const DocBlock = ({
         ? "opacity-60 transition-opacity duration-200"
         : "";
 
-    return `${byLevel} ${selected} ${opacity}`;
+    return `${byLevel} ${selected} ${opacity} ${parentReadOnly}`;
   }
 
   return (
     <div
       id={`block-${block.id}`}
-      className={`relative rounded-xl ${getClassesByLevel(block.level)}`}
+      className={`relative rounded-lg ${getClassesByLevel(block.level)}`}
       onClick={(e) => {
         e.stopPropagation();
         setSelectedBlock(block.id);
@@ -98,20 +115,18 @@ export const DocBlock = ({
       />
       {!block.collapsed && (
         <div>
-          {block.content.length === 0 ? (
+          {block.content.length === 0 && !readOnly ? (
             <p
               contentEditable={!readOnly}
               suppressContentEditableWarning
               onBlur={(e) => {
-                const newText = e.currentTarget.textContent || "";
+                const newHtml = e.currentTarget.innerHTML || "";
+                const newText = parseHtmlToFormat(newHtml);
                 if (newText) {
                   onUpdate({ ...block, content: [newText] });
                 }
               }}
-              className={`text-foreground/85 min-h-[1.5em]
-                  empty:before:content-['Escreva_aqui...'] pl-9.5 pb-3.25 pr-4
-                  empty:before:text-muted-foreground/50
-                  ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
+              className={paragraph({ readOnly })}
             />
           ) : (
             block.content.map((text, index) => (
@@ -120,15 +135,19 @@ export const DocBlock = ({
                 contentEditable={!readOnly}
                 suppressContentEditableWarning
                 onBlur={(e) => handleContentChange(index, e)}
-                className={`text-foreground/85 min-h-[1.5em]
-                    empty:before:content-['Escreva_aqui...'] pl-9.5 pb-3.25 pr-4
-                    empty:before:text-muted-foreground/50
-                    ${readOnly ? "cursor-pointer select-none" : "cursor-text"}`}
-              >
-                {text}
-              </p>
+                className={paragraph({ readOnly })}
+                dangerouslySetInnerHTML={{ __html: formatText(text) }}
+              />
             ))
           )}
+          {readOnly &&
+            block.level === 3 &&
+            !block.content.length &&
+            block.children.length === 0 && (
+              <p className="text-muted-foreground/66 pl-9.5">
+                Capítulo vazio...
+              </p>
+            )}
           {(block.images || []).map((image) => (
             <BlockImageItem
               key={image.id}
@@ -142,14 +161,14 @@ export const DocBlock = ({
             .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
             .map((child) => (
               <DocBlock
-              key={child.id}
-              block={child}
-              onUpdate={handleChildUpdate}
-              readOnly={readOnly}
-              selectedBlock={selectedBlock}
-              setSelectedBlock={setSelectedBlock}
-            />
-          ))}
+                key={child.id}
+                block={child}
+                onUpdate={handleChildUpdate}
+                readOnly={readOnly}
+                selectedBlock={selectedBlock}
+                setSelectedBlock={setSelectedBlock}
+              />
+            ))}
         </div>
       )}
     </div>

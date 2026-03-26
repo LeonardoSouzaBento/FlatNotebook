@@ -1,12 +1,6 @@
 import { Document } from "@/types/document";
 import { Link } from "react-router-dom";
-import {
-  Button,
-  Icon,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/ui";
+import { Button, Icon, Popover, PopoverContent, PopoverTrigger } from "@/ui";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/ui/alert-dialog";
-import { MoreHorizontal, Trash, Pencil } from "lucide-react";
+import { Trash, Pencil } from "lucide-react";
 
 interface DocsGridProps {
   documents: Document[];
@@ -51,45 +45,49 @@ export const DocsGrid = ({ documents, onDelete, onRename }: DocsGridProps) => {
               </p>
             </Link>
 
-            <div className="absolute top-4 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+            <div className="absolute top-2 right-2 z-20">
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
-                    variant="transparent"
+                    variant="secondary"
                     size="icon"
-                    className="h-8 w-8 rounded-full hover:bg-muted/50"
+                    className="bg-primary-100 hover:bg-primary-100/70"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Icon Icon={MoreHorizontal} size="sm" strokeWidth="normal" />
+                    <Icon Icon={Pencil} size="sm" strokeWidth="normal" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-40 p-1" align="end" sideOffset={8}>
-                  <div className="flex flex-col gap-1">
+                <PopoverContent className="w-40" align="end" sideOffset={8}>
+                  <div className="flex flex-col gap-2">
                     <Button
                       variant="transparent"
-                      className="justify-start gap-2 h-9 px-2 hover:bg-accent font-sans text-sm font-normal"
+                      size="sm"
+                      className="justify-start font-normal"
                       onClick={(e) => {
                         e.preventDefault();
                         onRename(doc);
                       }}
                     >
-                      <Icon Icon={Pencil} size="xs" />
+                      <Icon Icon={Pencil} />
                       Renomear
                     </Button>
 
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
-                          variant="transparent"
-                          className="justify-start gap-2 h-9 px-2 hover:bg-destructive/10 text-destructive font-sans text-sm font-normal"
+                          variant="destructive"
+                          size="sm"
+                          className="justify-start"
                         >
-                          <Icon Icon={Trash} size="xs" fill="var(--color-destructive-icon)" />
+                          <Icon Icon={Trash} size="sm" strokeWidth="bold" />
                           Apagar
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Excluir documento?</AlertDialogTitle>
+                          <AlertDialogTitle>
+                            Excluir documento?
+                          </AlertDialogTitle>
                           <AlertDialogDescription>
                             "{doc.title}" e todo o seu conteúdo serão excluídos
                             permanentemente.

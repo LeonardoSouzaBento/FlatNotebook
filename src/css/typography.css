@@ -47,4 +47,11 @@
   p {
     @apply font-body text-base font-normal leading-[1.65] tracking-[-0.01em];
   }
+
+  .small-btn {
+    @apply text-sm-button;
+  }
+  .large-btn {
+    @apply text-lg-button;
+  }
 }
