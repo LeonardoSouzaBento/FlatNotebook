@@ -38,7 +38,7 @@
   --spacing-ex-offset: calc(1ex - ((1em - 1cap) / 2));
   --color-foreground: hsl(0 20% 19.5%);
   --color-muted-foreground: hsl(0 12.29% 42%);
-  --color-border: hsl(0 7.14% 87%);
+  --color-border: hsl(0 7.14% 89%);
   --color-input-border: hsl(0 10.86% 71.3%);
   --color-input: hsl(0 5.43% 97.7%);
   --color-light-bg: hsl(36, 33%, 99%);

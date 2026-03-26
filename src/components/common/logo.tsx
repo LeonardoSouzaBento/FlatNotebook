@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Icon, IconProps } from "@/ui";
+import { Icon, IconType } from "@/ui";
 import { ListCollapse, LucideIcon, LucideProps } from "lucide-react";
 import { ComponentProps, ReactNode } from "react";
 import { Link } from "react-router-dom";
@@ -35,7 +35,7 @@ const LogoLink = ({ children, className, to = "/" }: LogoLinkProps) => {
 };
 
 // icon
-export interface OptionalIconProps extends Omit<IconProps, "Icon"> {
+export interface OptionalIconProps extends Omit<IconType, "Icon"> {
   Icon?: LucideIcon;
 }
 const LogoIcon = ({
@@ -74,7 +74,10 @@ const LogoTitle = ({ className, ...props }: ComponentProps<"h1">) => {
 const LogoDescription = ({ className, ...props }: ComponentProps<"p">) => {
   return (
     <p
-      className={cn("text-muted-foreground font-normal leading-none", className)}
+      className={cn(
+        "text-muted-foreground font-normal leading-none",
+        className,
+      )}
       {...props}
     />
   );

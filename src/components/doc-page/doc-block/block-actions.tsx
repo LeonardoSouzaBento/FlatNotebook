@@ -2,7 +2,7 @@ import { useDocPageContext } from "@/contexts";
 import { findSiblingsInfo } from "@/hooks/use-reorder-block";
 import type { Block, Document as Doc } from "@/types/document";
 import { Button, Icon } from "@/ui";
-import { ArrowUpDown, Copy } from "lucide-react";
+import { ArrowUpDown, CodeXml, Copy } from "lucide-react";
 import React, { useState, useMemo } from "react";
 import {
   AddChildBlockBtn,
@@ -89,6 +89,10 @@ export const BlockActions: React.FC<BlockActionsProps> = ({
 
       <Button variant="transparent" size="icon" onClick={onAddEquivalentBlock}>
         <Icon Icon={Copy} strokeWidth="light" />
+      </Button>
+
+      <Button variant="transparent" size="icon" >
+        <Icon Icon={CodeXml} strokeWidth="light" />
       </Button>
 
       <AddImageButton onClick={handleImageAdd} />

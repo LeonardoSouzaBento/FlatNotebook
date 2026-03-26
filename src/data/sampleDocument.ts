@@ -101,7 +101,7 @@ content: [
   "Texto normal",
   "**texto negrito**",
   "*texto itálico*",
-  "__texto sublinhado__",
+  "_texto sublinhado_",
   "!img[id_da_imagem]",
   "[link](https://google.com)",
   "[big] texto [/big]",

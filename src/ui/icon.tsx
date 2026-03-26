@@ -10,8 +10,8 @@ const weights = {
   medium: 2.15,
   semibold: 2.3,
   bold: 2.45,
-  extrabold: 2.6
-}
+  extrabold: 2.6,
+};
 
 type SizeValue = keyof typeof iconSizes;
 
@@ -30,7 +30,7 @@ const iconSizes = {
   h3: "1.602em",
 };
 
-export interface IconProps extends Omit<LucideProps, "size" | "strokeWidth"> {
+export interface IconType extends Omit<LucideProps, "size" | "strokeWidth"> {
   Icon: LucideIconType;
   size?: SizeValue | string;
   strokeWidth?: StrokeWidthValue | string;
@@ -42,7 +42,7 @@ export const Icon = ({
   className,
   strokeWidth = "normal",
   fill,
-}: IconProps) => {
+}: IconType) => {
   return (
     <div className="h-3 inline-flex justify-center items-center overflow-visible [&_svg]:shrink-0">
       <Icon
