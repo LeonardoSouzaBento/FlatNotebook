@@ -127,7 +127,11 @@ export function FormatToolbar() {
       }
 
       const node = selection.anchorNode;
-      if (!node || !node.parentElement?.closest('[contenteditable="true"]')) {
+      const isInContentEditable = node?.nodeType === Node.ELEMENT_NODE 
+        ? (node as HTMLElement).closest('[contenteditable="true"]')
+        : node?.parentElement?.closest('[contenteditable="true"]');
+
+      if (!isInContentEditable) {
         setIsVisible(false);
         return;
       }

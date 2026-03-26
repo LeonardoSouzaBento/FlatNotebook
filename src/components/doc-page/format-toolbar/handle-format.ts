@@ -42,10 +42,19 @@ export const handleFormat = (
       if (formatNode) {
         const parent = formatNode.parentNode;
         if (parent) {
+          const firstChild = formatNode.firstChild;
+          const lastChild = formatNode.lastChild;
           while (formatNode.firstChild) {
             parent.insertBefore(formatNode.firstChild, formatNode);
           }
           parent.removeChild(formatNode);
+          if (firstChild && lastChild) {
+            const newRange = document.createRange();
+            newRange.setStartBefore(firstChild);
+            newRange.setEndAfter(lastChild);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+          }
         }
       } else {
         // Otherwise, extract contents and remove any inner tags with the class
@@ -62,13 +71,25 @@ export const handleFormat = (
         });
         const afterExtract = document.createDocumentFragment();
         while (temp.firstChild) afterExtract.appendChild(temp.firstChild);
+        const children = Array.from(afterExtract.childNodes);
         range.insertNode(afterExtract);
+        if (children.length > 0) {
+          const newRange = document.createRange();
+          newRange.setStartBefore(children[0]);
+          newRange.setEndAfter(children[children.length - 1]);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
       }
     } else {
       // Toggle ON: If we're inside a node with the OTHER class, swap it
       if (otherFormatNode) {
         otherFormatNode.classList.remove(otherClassName);
         otherFormatNode.classList.add(className);
+        const newRange = document.createRange();
+        newRange.selectNodeContents(otherFormatNode);
+        selection.removeAllRanges();
+        selection.addRange(newRange);
       } else {
         // Otherwise, extract, remove any inner "other" tags, and wrap everything
         const frag = range.extractContents();
@@ -89,6 +110,10 @@ export const handleFormat = (
         wrapper.className = className;
         while (temp.firstChild) wrapper.appendChild(temp.firstChild);
         range.insertNode(wrapper);
+        const newRange = document.createRange();
+        newRange.selectNodeContents(wrapper);
+        selection.removeAllRanges();
+        selection.addRange(newRange);
       }
     }
   } else {
@@ -114,10 +139,19 @@ export const handleFormat = (
       if (formatNode) {
         const parent = formatNode.parentNode;
         if (parent) {
+          const firstChild = formatNode.firstChild;
+          const lastChild = formatNode.lastChild;
           while (formatNode.firstChild) {
             parent.insertBefore(formatNode.firstChild, formatNode);
           }
           parent.removeChild(formatNode);
+          if (firstChild && lastChild) {
+            const newRange = document.createRange();
+            newRange.setStartBefore(firstChild);
+            newRange.setEndAfter(lastChild);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+          }
         }
       } else {
         const frag = range.extractContents();
@@ -139,7 +173,15 @@ export const handleFormat = (
         while (temp.firstChild) {
           afterExtract.appendChild(temp.firstChild);
         }
+        const children = Array.from(afterExtract.childNodes);
         range.insertNode(afterExtract);
+        if (children.length > 0) {
+          const newRange = document.createRange();
+          newRange.setStartBefore(children[0]);
+          newRange.setEndAfter(children[children.length - 1]);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
       }
     } else {
       const wrapper = document.createElement(
@@ -147,6 +189,10 @@ export const handleFormat = (
       );
       wrapper.appendChild(range.extractContents());
       range.insertNode(wrapper);
+      const newRange = document.createRange();
+      newRange.selectNodeContents(wrapper);
+      selection.removeAllRanges();
+      selection.addRange(newRange);
     }
   }
 
